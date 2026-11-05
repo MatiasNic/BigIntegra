@@ -5,8 +5,7 @@ Ejecutar:
 
 No usa FastAPI/Uvicorn, no abre puertos, no usa /api ni 127.0.0.1.
 La interfaz HTML/CSS/JS se carga localmente y llama a Python mediante
-QWebChannel. El acceso se verifica al iniciar contra Google Sheets
-sin mostrar pantalla de login.
+QWebChannel. No hay control de acceso ni login: abre directamente.
 """
 from __future__ import annotations
 
@@ -21,7 +20,7 @@ from app import __version__ as APP_VERSION
 os.environ["LOCAL"] = "1"
 
 # Modo interno de proceso independiente. Se resuelve antes de importar PySide6,
-# QtWebEngine o el control de acceso para que el child sea liviano y headless.
+# QtWebEngine para que el child sea liviano y headless.
 if len(sys.argv) >= 3 and sys.argv[1] == "--bigpdf-export-worker":
     os.environ["BIGPDF_EXPORT_WORKER"] = "1"
     from app.desktop.export_process import export_worker_entry
@@ -66,7 +65,6 @@ if _gpu_compat_requested() and "--disable-gpu" not in _chromium_flags:
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = _chromium_flags
 
 import logging
-import threading
 
 from PySide6.QtCore import QEvent, Qt, QTimer, QUrl
 from PySide6.QtGui import QColor, QIcon, QKeySequence, QPixmap, QShortcut
@@ -530,7 +528,7 @@ class MainWindow(QMainWindow):
         self.activateWindow()
 
     def closeEvent(self, event) -> None:  # noqa: N802
-        # _force_close: cierre decidido por la app (p. ej. acceso revocado), sin preguntar.
+        # _force_close: cierre decidido por la app, sin preguntar.
         if not getattr(self, "_force_close", False) and self.bridge.has_active_jobs():
             answer = QMessageBox.question(
                 self,
@@ -634,12 +632,9 @@ def _close_bootloader_splash() -> None:
         pass
 
 
-class _AccessSplash(QWidget):
-    """Ventana de inicio "Verificando acceso…" con el logo y los colores de Big Integra.
-
-    Se muestra apenas arranca la app, mientras corre el chequeo de red: antes no se
-    veía nada durante varios segundos y el usuario volvía a hacer doble clic.
-    """
+class _StartupSplash(QWidget):
+    """Ventana de inicio con el logo mientras se arma la ventana principal
+    (QtWebEngine tarda unos segundos en arrancar)."""
 
     _BRAND = "#2A6FE0"
 
@@ -692,7 +687,7 @@ class _AccessSplash(QWidget):
         version.setObjectName("splashVersion")
         version.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        self.label = QLabel("Verificando acceso…", card)
+        self.label = QLabel("Abriendo…", card)
         self.label.setObjectName("splashStatus")
         self.label.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
@@ -735,35 +730,6 @@ class _AccessSplash(QWidget):
         self.move(geo.center().x() - self.width() // 2, geo.center().y() - self.height() // 2)
 
 
-def _start_access_check(on_done) -> None:
-    """Corre check_access() en un hilo y entrega el resultado en el hilo de Qt."""
-    from app.core.auth.access_control import AccessResult, check_access
-
-    holder: dict = {}
-
-    def _run() -> None:
-        try:
-            holder["result"] = check_access()
-        except Exception as exc:  # defensivo: nunca dejar la app colgada
-            logger.exception("access check crashed: %s", exc)
-            holder["result"] = AccessResult(False, f"Error verificando el acceso: {exc}", "invalid")
-
-    thread = threading.Thread(target=_run, name="bigpdf-access", daemon=True)
-    thread.start()
-
-    timer = QTimer(QApplication.instance())
-    timer.setInterval(100)
-
-    def _poll() -> None:
-        if "result" in holder:
-            timer.stop()
-            timer.deleteLater()
-            on_done(holder["result"])
-
-    timer.timeout.connect(_poll)
-    timer.start()
-
-
 def main() -> int:
     activar_app_id_windows()
 
@@ -793,8 +759,7 @@ def main() -> int:
     app.setApplicationVersion(APP_VERSION)
     app.setOrganizationName("BigIntegra")
     app.setDesktopFileName(APP_USER_MODEL_ID)
-    # La salida es explícita (closeEvent / app.exit): si no, al cerrar el aviso
-    # de "sin conexión" Qt terminaba la app antes de poder "Reintentar".
+    # La salida es explícita (closeEvent): limpia la sesión antes de salir.
     app.setQuitOnLastWindowClosed(False)
 
     # Instancia única: abrir Big Integra otra vez trae al frente la ventana existente.
@@ -809,20 +774,12 @@ def main() -> int:
     if not app_icon.isNull():
         app.setWindowIcon(app_icon)
 
-    splash = _AccessSplash(app_icon)
+    splash = _StartupSplash(app_icon)
     splash.show()
     app.processEvents()
     _close_bootloader_splash()
 
-    # Arranque más rápido:
-    # A) La ventana principal (QtWebEngine + interfaz) se arma por detrás MIENTRAS
-    #    se verifica el acceso, en vez de esperar la respuesta para empezar.
-    # B) Si la PC validó online en las últimas RECENT_VALIDATION_HOURS horas, la
-    #    ventana se muestra enseguida y la planilla se consulta en segundo plano;
-    #    si deniega el acceso, la app se cierra con el mensaje.
-    from app.core.auth.access_control import has_recent_validation
-    fast_start = has_recent_validation()
-    state: dict = {"window": None, "shown": False}
+    state: dict = {"window": None}
 
     def _on_instance_connection() -> None:
         while instance_server.hasPendingConnections():
@@ -837,19 +794,11 @@ def main() -> int:
 
     instance_server.newConnection.connect(_on_instance_connection)
 
-    def _create_window() -> MainWindow:
-        if state["window"] is None:
-            window = MainWindow()
-            if not app_icon.isNull():
-                window.setWindowIcon(app_icon)
-            state["window"] = window
-        return state["window"]
-
     def _show_main_window() -> None:
-        window = _create_window()
-        if state["shown"]:
-            return
-        state["shown"] = True
+        window = MainWindow()
+        if not app_icon.isNull():
+            window.setWindowIcon(app_icon)
+        state["window"] = window
         icon_path = get_app_icon_path()
         force_windows_taskbar_icon(window, icon_path)
         window.showMaximized()
@@ -858,65 +807,9 @@ def main() -> int:
         # el botón de la barra de tareas cuando el HWND ya está visible.
         QTimer.singleShot(250, lambda: force_windows_taskbar_icon(window, icon_path))
 
-    def _exit_app(code: int) -> None:
-        window = state["window"]
-        if window is not None:
-            window._force_close = True
-            window.close()  # cancela tareas y borra la carpeta temporal de la sesión
-        app.exit(code)
-
-    def _on_access(result) -> None:
-        logger.info(
-            "access check: ok=%s kind=%s (ventana ya visible=%s)",
-            result.ok, result.kind, state["shown"],
-        )
-        if state["shown"]:
-            # Arranque rápido: la verificación corrió por detrás. Solo un "denegado"
-            # explícito de la planilla cierra la app; sin red o con error del
-            # servicio se sigue, porque la PC validó online hace menos de 24 h.
-            if result.kind == "denied":
-                window = state["window"]
-                window.hide()
-                QMessageBox.critical(
-                    None, "Big Integra — Acceso denegado",
-                    f"No se pudo acceder a Big Integra.\n\n{result.message}",
-                )
-                _exit_app(1)
-            return
-        if result.ok:
-            _show_main_window()
-            if result.kind == "offline":
-                QTimer.singleShot(1500, lambda: QMessageBox.information(
-                    state["window"], "Big Integra — Sin conexión", result.message,
-                ))
-            return
-
-        box = QMessageBox()
-        box.setWindowTitle(
-            "Big Integra — Acceso denegado" if result.kind == "denied" else "Big Integra — Sin conexión"
-        )
-        if not app_icon.isNull():
-            box.setWindowIcon(app_icon)
-        box.setIcon(QMessageBox.Icon.Critical if result.kind == "denied" else QMessageBox.Icon.Warning)
-        box.setText("No se pudo acceder a Big Integra.")
-        box.setInformativeText(result.message)
-        retry = None
-        if result.can_retry:
-            retry = box.addButton("Reintentar", QMessageBox.ButtonRole.AcceptRole)
-        box.addButton("Cerrar", QMessageBox.ButtonRole.RejectRole)
-        splash.hide()
-        box.exec()
-        if retry is not None and box.clickedButton() is retry:
-            splash.label.setText("Verificando acceso…")
-            splash.show()
-            _start_access_check(_on_access)
-            return
-        _exit_app(1)
-
-    _start_access_check(_on_access)
-    # singleShot(0): primero se pinta la ventana "Verificando acceso…" y recién
-    # después se arma la principal (crearla bloquea el hilo de Qt un momento).
-    QTimer.singleShot(0, _show_main_window if fast_start else _create_window)
+    # singleShot(0): primero se pinta la ventana de inicio y recién después se arma
+    # la principal (crearla bloquea el hilo de Qt un momento).
+    QTimer.singleShot(0, _show_main_window)
     return app.exec()
 
 
