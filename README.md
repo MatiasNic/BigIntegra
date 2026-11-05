@@ -47,14 +47,13 @@ python tools/dev/integra_eval.py --medir "C:\ruta\a\legajos\integra_eval.csv"
 
 ```
 app/
-├── core/auth/       # Verificación de acceso global al arrancar (Google Apps Script)
 ├── desktop/         # Puente QWebChannel, workers y proceso de exportación
 ├── engine/          # Lógica de PDF (compresión, conversión, ghostscript, export)
 │                     #   sin dependencia de PySide6 — testeable de forma aislada
 └── ui/web/          # Interfaz (HTML/CSS/JS), vendored: pdf.js, jszip
 
 packaging/           # BigIntegra_Desktop.spec (PyInstaller) + build_exe.bat
-tools/dev/           # Scripts de desarrollo (encode_auth_url.py)
+tools/dev/           # Scripts de desarrollo (integra_eval.py, make_splash.py)
 tests/               # Tests unitarios de app/engine
 ```
 
@@ -114,6 +113,20 @@ pip install -r requirements.txt -r requirements-dev.txt
 python main.py
 ```
 
+### Python de Microsoft Store: usar un entorno `.venv`
+
+Con el Python de Microsoft Store, `pip install` de PySide6 falla con "No such file or
+directory" por el límite de 260 caracteres de Windows (su carpeta de paquetes tiene una
+ruta muy larga). Solución sin permisos de administrador: un entorno dentro del proyecto.
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe main.py
+```
+
+En VS Code: `Ctrl+Shift+P` → "Python: Select Interpreter" → el que dice `('.venv')`.
+
 ### Lint y tests
 
 ```bash
@@ -121,7 +134,7 @@ ruff check .
 pytest
 ```
 
-Los tests cubren `app/engine/` (servicios de PDF), el control de acceso (`tests/core/`)
+Los tests cubren `app/engine/` (servicios de PDF), la versión y el CHANGELOG (`tests/core/`), Integra (`tests/integra/`)
 y el bridge de escritorio (`tests/desktop/`, con Qt sin ventana: importar, comprimir,
 cancelar, exportar y guardar). Los de `tests/desktop/` se saltean si PySide6 no está
 instalado; así el CI de GitHub no necesita instalar Qt. La interfaz completa se prueba
@@ -129,40 +142,10 @@ a mano con `docs/checklist-pruebas.md` antes de distribuir un `.exe`.
 
 Cambios visibles para el usuario: anotarlos en `CHANGELOG.md`.
 
-## Acceso y credenciales
+## Acceso
 
-Big Integra valida el acceso al arrancar contra un Google Apps Script (`app/core/auth/access_control.py`).
-La URL del script está ofuscada (XOR + base64, **no es cifrado real**) en
-`app/core/auth/auth_settings.py::ACCESS_SOURCE_URLS_B64`.
-
-**Uso sin internet:** si no hay conexión (o el Apps Script falla), la app funciona solo
-durante los días indicados en la columna `diasGracia` que devuelve la planilla, contados
-desde la última validación online exitosa. Con `diasGracia = 0` no se permite usar sin
-conexión. El registro de la última validación vive en
-`%LOCALAPPDATA%\BigIntegra\access_cache.json`, firmado y ligado al equipo y usuario de
-Windows: si se edita, se copia a otra PC o se atrasa el reloj, se rechaza. Si la planilla
-deniega el acceso, ese registro se borra y la app deja de funcionar también sin conexión.
-
-Para desarrollo local, definí la variable de entorno en vez de tocar el código:
-
-```bash
-export BIGPDF_ACCESS_URL="https://script.google.com/macros/s/.../exec"
-```
-
-Para generar el valor ofuscado a pegar en `ACCESS_SOURCE_URLS_B64`:
-
-```bash
-python tools/dev/encode_auth_url.py "https://script.google.com/macros/s/.../exec"
-```
-
-**Antes de hacer este repositorio público** (la ofuscación actual solo evita que la URL
-quede en texto plano; no protege contra alguien con acceso al repo):
-
-1. Publicar un Apps Script nuevo (URL nueva): la actual queda en el historial de git
-   aunque se borre del código.
-2. Sacar la URL de `auth_settings.py`: leerla de `BIGPDF_ACCESS_URL` o inyectarla al
-   compilar desde un secreto de GitHub Actions.
-3. Cambiar `ACCESS_SOURCE_XOR_KEY` (también firma el caché de acceso sin conexión).
+Big Integra **no tiene control de acceso ni login**: abre directamente. (BigPDF valida
+contra una planilla; Big Integra es un desarrollo aparte y eso se quitó.)
 
 ## Build del ejecutable (Windows)
 
@@ -201,6 +184,5 @@ sección **Artifacts** → bajar el `.zip` y extraer el `.exe` (se conserva 14 d
 ## Versión
 
 La versión vive en un solo lugar: `app/__init__.py::__version__`. Se referencia desde
-`main.py` (título de ventana, AppUserModelID de Windows) y `app/core/auth/auth_settings.py`
-(`APP_VERSION`). El nombre del ejecutable en `packaging/BigIntegra_Desktop.spec` se actualiza
+`main.py` (título de ventana, AppUserModelID de Windows). El nombre del ejecutable en `packaging/BigIntegra_Desktop.spec` se actualiza
 manualmente en cada release.

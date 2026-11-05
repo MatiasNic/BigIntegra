@@ -46,8 +46,6 @@ a = Analysis(
         "app.engine.integra.classifier",
         "app.engine.integra.analyzer",
         "app.engine.integra.service",
-        "app.core.auth.access_control",
-        "app.core.auth.auth_settings",
         "app.desktop.bridge",
         "app.desktop.workers",
         "app.desktop.export_process",

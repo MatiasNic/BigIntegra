@@ -10,6 +10,15 @@ subiendo el último dígito: 0.1.0 → 0.1.1 → 0.1.2… El número vive solo e
 
 (Todavía nada.)
 
+## [0.1.2] - 2026-11-05
+
+### Cambiado
+- **Sin control de acceso**: Big Integra abre directamente, sin validar contra la planilla
+  de BigPDF (que lo bloqueaba con "Versión desactualizada"). Se quitó todo lo relacionado
+  con el acceso.
+- README: cómo instalar con el Python de Microsoft Store (entorno `.venv` dentro del
+  proyecto, por el límite de rutas largas de Windows).
+
 ## [0.1.1] - 2026-11-05
 
 ### Nuevo

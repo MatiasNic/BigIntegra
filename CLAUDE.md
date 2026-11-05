@@ -51,14 +51,10 @@ pip install -r requirements.txt
 python main.py
 ```
 
-Necesita entorno gráfico real (Windows recomendado). Valida el acceso al arrancar
-contra un Google Apps Script (`app/core/auth/access_control.py`). Sin internet,
-funciona solo durante `diasGracia` días (columna de la planilla) desde la última
-validación online; el caché está firmado (HMAC ligado al equipo), detecta reloj
-atrasado y se borra si la planilla deniega el acceso. Arranque rápido: si validó
-online hace < 24 h (`RECENT_VALIDATION_HOURS`), la ventana se muestra sin esperar la
-planilla y la verificación corre por detrás (un "denegado" cierra la app); si no, la
-ventana se arma en paralelo y se muestra al llegar el OK. Logs en
+Necesita entorno gráfico real (Windows recomendado). **Sin control de acceso ni login**
+(BigPDF valida contra una planilla; en Big Integra se quitó a pedido del dueño: no
+volver a agregarlo). Con Python de Microsoft Store usar un `.venv` dentro del proyecto
+(límite de 260 caracteres de Windows al instalar PySide6). Logs en
 `%LOCALAPPDATA%\BigIntegra\logs\bigpdf.log`.
 Ghostscript y LibreOffice son dependencias externas **opcionales** — sin ellas la app
 sigue funcionando con degradación elegante (compresión vía PyMuPDF en vez de
@@ -70,10 +66,6 @@ Ghostscript; conversión de Office deshabilitada sin LibreOffice).
 main.py                    Entry point. Ventana PySide6 + QWebEngineView.
                             IMPORTANTE: setea os.environ ANTES de importar PySide6
                             (por eso hay imports "fuera de orden" — es intencional).
-
-app/core/auth/              Validación de acceso al arrancar (Google Apps Script).
-                            URL ofuscada con XOR+base64 en auth_settings.py — NO es
-                            cifrado real, solo evita texto plano a simple vista.
 
 app/desktop/                Capa de integración con Qt.
   bridge.py                   Expone métodos Python a JS vía QWebChannel (@Slot).
@@ -113,9 +105,9 @@ packaging/                  BigIntegra_Desktop.spec (PyInstaller) + build_exe.ba
                              descomprime (PyInstaller Splash, usa Tcl/Tk solo ahí);
                              main.py la cierra al mostrar la ventana de Qt. Se
                              regenera con tools/dev/make_splash.py.
-tools/dev/                  Scripts de desarrollo (encode_auth_url.py).
+tools/dev/                  Scripts de desarrollo (integra_eval.py, make_splash.py).
 tests/server/                Tests de app/engine (no requieren GUI).
-tests/core/                  Tests del control de acceso (no requieren GUI).
+tests/core/                  Test de versión/CHANGELOG (no requiere GUI).
 tests/desktop/               Tests del bridge con Qt offscreen (importar, comprimir,
                              cancelar, exportar en proceso aparte, guardar). Se
                              saltean solos si no hay PySide6 (así corre el CI).
@@ -133,7 +125,7 @@ tests/desktop/               Tests del bridge con Qt offscreen (importar, compri
 - **Dos carpetas de datos**: la sesión temporal (`%TEMP%\BigIntegra\<uuid>`, documentos
   del usuario, se borra al cerrar; protegida con `.session.lock` para que otra
   instancia no la purgue) y `APP_DATA_DIR` (`%LOCALAPPDATA%\BigIntegra`, persistente:
-  caché de acceso firmado, `logs/`, `prefs.json`). Nunca guardar documentos del
+  `logs/`, `prefs.json`). Nunca guardar documentos del
   usuario en `APP_DATA_DIR`.
 - **Rotación de páginas = delta** sobre el `/Rotate` propio de la página, igual en la
   UI (pdf.js: `pdfPage.rotate + page.rotation`) y en el motor
@@ -162,12 +154,6 @@ tests/desktop/               Tests del bridge con Qt offscreen (importar, compri
 - Algunos docstrings todavía mencionan "rutas", "workspace_routes.py" o
   `run_in_threadpool` — vocabulario de la época en que esto era una app web. No
   afecta funcionalidad, solo puede confundir al leer.
-- La ofuscación de la URL de acceso (XOR+base64) no es seguridad real. Aceptable
-  mientras el repo sea privado (decisión tomada). **Si alguna vez se hace público**,
-  antes: (1) cambiar la URL del Apps Script (publicar uno nuevo; la vieja quedó en el
-  historial de git), (2) sacarla de `auth_settings.py` y leerla de `BIGPDF_ACCESS_URL`
-  o de un secreto de GitHub Actions inyectado al compilar, (3) cambiar la clave
-  `ACCESS_SOURCE_XOR_KEY`, que también firma el caché de acceso sin conexión.
 
 ## Flujo de trabajo
 
