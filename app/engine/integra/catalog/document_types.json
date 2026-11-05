@@ -299,7 +299,10 @@
         "maestra de apoyo",
         "integracion escolar",
         "sesiones semanales",
-        "por el periodo"
+        "por el periodo",
+        "acompanante terapeutico",
+        "acompanamiento terapeutico",
+        "horas semanales"
       ],
       "excluye": [
         "condiciones generales para toda la documentacion",
@@ -423,7 +426,10 @@
         "cuit",
         "condicion frente al iva",
         "mensual",
-        "$"
+        "$",
+        "acompanante terapeutico",
+        "valor hora",
+        "horas mensuales"
       ],
       "excluye": [
         "condiciones generales para toda la documentacion",
@@ -508,7 +514,11 @@
         "condiciones generales para toda la documentacion",
         "informacion importante para cumplimentar",
         "resolucion n 1907 2023 prorroga"
-      ]
+      ],
+      "patrones": [
+        "\\b[a-z]{3}\\s*[-.]\\s*\\d{2}\\s*[-.]\\s*\\d{11}\\s*[-.]\\s*\\d{8}\\s*[-.]\\s*\\d{8}"
+      ],
+      "nota": "El número de CUD (ARG-xx-CUIL-emisión-vencimiento-PROV-nnn) es la señal más confiable."
     },
     {
       "id": "constancia_arca",
@@ -649,7 +659,11 @@
         "decano",
         "diploma",
         "registro de titulos",
-        "legalizacion"
+        "legalizacion",
+        "acompanante terapeutico",
+        "certificado de formacion",
+        "curso de formacion",
+        "carga horaria"
       ],
       "palabras": [
         "titulo",

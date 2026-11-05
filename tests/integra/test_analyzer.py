@@ -111,3 +111,16 @@ def test_conditions_switch_requirements():
     ids_cont = {i["id"] for i in cont["prestaciones"][0]["items"]}
     assert "informe_inicial" in ids_nueva and "informe_evolutivo" not in ids_nueva
     assert "informe_evolutivo" in ids_cont and "informe_inicial" not in ids_cont
+
+
+def test_acompanante_terapeutico_disponible():
+    ids = [p["id"] for p in catalog_summary()["prestaciones"]]
+    assert "acompanante_terapeutico" in ids
+    pages = [
+        {"page_id": "a", "source_document_id": "d", "text": "ORDEN MÉDICA\nSolicito acompañante terapéutico"}
+    ]
+    for page, cls in zip(pages, classify_pages(pages), strict=True):
+        page["clasificacion"] = cls
+    result = analyze(pages, ["acompanante_terapeutico"], today=date(2025, 2, 1))
+    (at,) = result["prestaciones"]
+    assert at["provisoria"] and at["tipoPrestacion"] == "acompanante_terapeutico"

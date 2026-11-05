@@ -116,3 +116,9 @@ def test_external_documents_by_keywords():
     )
     assert classify_text(cud).type_id == "cud"
     assert classify_text(arca).type_id == "constancia_arca"
+
+
+def test_cud_recognized_by_number_alone():
+    """Un CUD mal escaneado se reconoce solo por la estructura de su número."""
+    text = "ARG-01-20123456786-20220315-20270315-BUE-123\nApellido y nombre"
+    assert classify_text(text).type_id == "cud"

@@ -153,6 +153,46 @@ def field_value(text: str, label: str, max_len: int = 80) -> str:
     return ""
 
 
+# Número de CUD: ARG-<2>-<11>-<AAAAMMDD emisión>-<AAAAMMDD vencimiento>-<PROV>-<nnn>.
+# La parte con las fechas es fija; la cola (provincia de 2-3 letras, 3-5 dígitos) varía y
+# a veces falta. Se toleran espacios/puntos del OCR y prefijos mal leídos (VEN, IRG…).
+# Verificado contra 327 CUD leídos por el agente anterior.
+_SEP = r"\s*[-–.]\s*"
+_CUD_RE = re.compile(
+    rf"\b([A-Z]{{3}}){_SEP}(\d{{2}}){_SEP}(\d{{11}}){_SEP}(\d{{8}}){_SEP}(\d{{8}})"
+    rf"(?:{_SEP}([A-Z]{{2,3}}(?:\s[A-Z]{{2}})?|\d{{2}}))?(?:{_SEP}(\d{{1,5}}))?",
+    re.IGNORECASE,
+)
+
+
+def _yyyymmdd(value: str) -> date | None:
+    return _safe_date(int(value[6:8]), int(value[4:6]), int(value[:4]))
+
+
+def find_cud_code(text: str) -> dict | None:
+    """Número de CUD con sus fechas de emisión y vencimiento (codificadas en el número)."""
+    m = _CUD_RE.search(text)
+    if not m:
+        return None
+    emision, vencimiento = _yyyymmdd(m.group(4)), _yyyymmdd(m.group(5))
+    if vencimiento and emision and vencimiento <= emision:
+        vencimiento = None  # bloque mal leído: no se usa
+    return {
+        "numero": "-".join(g for g in m.groups() if g).upper(),
+        "emision": emision.isoformat() if emision else None,
+        "vencimiento": vencimiento.isoformat() if vencimiento else None,
+    }
+
+
+_CUE_RE = re.compile(r"\bc\.?\s?u\.?\s?e\.?\s*(?:n[°ºo.]*)?\s*:?\s*(\d{7}\s*[-/]?\s*\d{2})\b", re.IGNORECASE)
+
+
+def find_cue(text: str) -> str:
+    """CUE (Clave Única de Establecimiento): 9 dígitos (7 + 2 de anexo)."""
+    m = _CUE_RE.search(text)
+    return re.sub(r"\D", "", m.group(1)) if m else ""
+
+
 def first_int(value: str) -> int | None:
     m = re.search(r"\d+", value or "")
     return int(m.group()) if m else None
@@ -252,10 +292,15 @@ def extract_fields(text: str, type_id: str) -> dict:
     if type_id == "presupuesto_transporte":
         data["km_mensuales"] = first_int(field_value(text, "Total Kms. mensuales", 20))
     if type_id == "cud":
+        codigo = find_cud_code(text)
+        data["cud"] = codigo
         vto = re.search(
             r"vencimiento[^0-9]{0,30}(\d{1,2}\s*[/\-.]\s*\d{1,2}\s*[/\-.]\s*\d{2,4})", normalize(text)
         )
-        data["vencimiento"] = (
-            find_dates(vto.group(1))[0].isoformat() if vto and find_dates(vto.group(1)) else None
-        )
+        leido = find_dates(vto.group(1))[0].isoformat() if vto and find_dates(vto.group(1)) else None
+        # El vencimiento codificado en el número de CUD es más confiable que el rótulo leído
+        # por OCR (en 274 de 281 legajos del agente anterior coincidían ambos).
+        data["vencimiento"] = (codigo or {}).get("vencimiento") or leido
+    if type_id in ("alumno_regular", "acta_acuerdo") or "cue" in normalize(text).split():
+        data["cue"] = find_cue(text)
     return data

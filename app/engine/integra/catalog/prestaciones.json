@@ -2,22 +2,114 @@
   "version": "2024-instructivos",
   "nota": "Requisitos transcriptos de los instructivos 2024. Las prestaciones marcadas 'provisoria' se armaron con las reglas del flujo anterior porque falta su instructivo. Cada requisito lista los tipos de documento (document_types.json) que lo cumplen; 'alternativos' lo cumplen con observación.",
   "condiciones": [
-    {"id": "tipo_solicitud", "nombre": "Tipo de solicitud", "opciones": {"nueva": "Nueva prestación", "continuidad": "Continuidad (se otorgó el año anterior)"}, "defecto": "nueva"},
-    {"id": "prestador", "nombre": "Prestador", "opciones": {"particular": "Profesional particular / equipo", "institucion": "Institución"}, "defecto": "institucion"},
-    {"id": "dependencia", "nombre": "Solicita dependencia", "opciones": {"no": "No", "si": "Sí"}, "defecto": "no"},
-    {"id": "edad_escolar", "nombre": "Asociado en edad escolar", "opciones": {"no": "No", "si": "Sí"}, "defecto": "no"},
-    {"id": "cambio_prestador", "nombre": "Cambio de prestador / esquema", "opciones": {"no": "No", "si": "Sí"}, "defecto": "no"}
+    {
+      "id": "tipo_solicitud",
+      "nombre": "Tipo de solicitud",
+      "opciones": {
+        "nueva": "Nueva prestación",
+        "continuidad": "Continuidad (se otorgó el año anterior)"
+      },
+      "defecto": "nueva"
+    },
+    {
+      "id": "prestador",
+      "nombre": "Prestador",
+      "opciones": {
+        "particular": "Profesional particular / equipo",
+        "institucion": "Institución"
+      },
+      "defecto": "institucion"
+    },
+    {
+      "id": "dependencia",
+      "nombre": "Solicita dependencia",
+      "opciones": {
+        "no": "No",
+        "si": "Sí"
+      },
+      "defecto": "no"
+    },
+    {
+      "id": "edad_escolar",
+      "nombre": "Asociado en edad escolar",
+      "opciones": {
+        "no": "No",
+        "si": "Sí"
+      },
+      "defecto": "no"
+    },
+    {
+      "id": "cambio_prestador",
+      "nombre": "Cambio de prestador / esquema",
+      "opciones": {
+        "no": "No",
+        "si": "Sí"
+      },
+      "defecto": "no"
+    }
   ],
   "generales": {
     "nombre": "Requisitos generales",
     "fuente": "Requisitos Generales 2024",
     "requisitos": [
-      {"id": "cud", "nombre": "Certificado de discapacidad (CUD) vigente", "tipos": ["cud"], "falta": "CUD no identificado en el legajo."},
-      {"id": "datos_personales", "nombre": "Formulario de datos personales", "tipos": ["datos_personales"], "falta": "Formulario de datos personales no identificado."},
-      {"id": "conformidad_prestacional", "nombre": "Conformidad Prestacional (SSSalud)", "tipos": ["conformidad_prestacional"], "excepto_solo": ["transporte"], "falta": "Conformidad Prestacional no identificada."},
-      {"id": "resumen_hc", "nombre": "Resumen de historia clínica", "tipos": ["resumen_hc"], "falta": "Resumen de Historia Clínica no identificado."},
-      {"id": "alumno_regular", "nombre": "Constancia de alumno regular con CUE (edad escolar)", "tipos": ["alumno_regular"], "cuando": {"edad_escolar": "si"}, "falta": "Constancia de alumno regular con CUE (o nota de no escolarización) no identificada. Puede presentarse hasta 60 días después del inicio del ciclo escolar."},
-      {"id": "nota_cambio", "nombre": "Nota de cambio de prestador / baja", "tipos": ["nota_cambio_prestador", "nota_baja_prestacion"], "cuando": {"cambio_prestador": "si"}, "falta": "Nota de cambio de prestador (motivo, fecha de baja y de alta) no identificada."}
+      {
+        "id": "cud",
+        "nombre": "Certificado de discapacidad (CUD) vigente",
+        "tipos": [
+          "cud"
+        ],
+        "falta": "CUD no identificado en el legajo."
+      },
+      {
+        "id": "datos_personales",
+        "nombre": "Formulario de datos personales",
+        "tipos": [
+          "datos_personales"
+        ],
+        "falta": "Formulario de datos personales no identificado."
+      },
+      {
+        "id": "conformidad_prestacional",
+        "nombre": "Conformidad Prestacional (SSSalud)",
+        "tipos": [
+          "conformidad_prestacional"
+        ],
+        "excepto_solo": [
+          "transporte"
+        ],
+        "falta": "Conformidad Prestacional no identificada."
+      },
+      {
+        "id": "resumen_hc",
+        "nombre": "Resumen de historia clínica",
+        "tipos": [
+          "resumen_hc"
+        ],
+        "falta": "Resumen de Historia Clínica no identificado."
+      },
+      {
+        "id": "alumno_regular",
+        "nombre": "Constancia de alumno regular con CUE (edad escolar)",
+        "tipos": [
+          "alumno_regular"
+        ],
+        "cuando": {
+          "edad_escolar": "si"
+        },
+        "falta": "Constancia de alumno regular con CUE (o nota de no escolarización) no identificada. Puede presentarse hasta 60 días después del inicio del ciclo escolar."
+      },
+      {
+        "id": "nota_cambio",
+        "nombre": "Nota de cambio de prestador / baja",
+        "tipos": [
+          "nota_cambio_prestador",
+          "nota_baja_prestacion"
+        ],
+        "cuando": {
+          "cambio_prestador": "si"
+        },
+        "falta": "Nota de cambio de prestador (motivo, fecha de baja y de alta) no identificada."
+      }
     ]
   },
   "prestaciones": [
@@ -26,17 +118,116 @@
       "nombre": "Tratamientos de rehabilitación",
       "fuente": "Tratamientos de Rehabilitación 2024",
       "requisitos": [
-        {"id": "orden", "nombre": "Prescripción médica - Prestaciones de rehabilitación", "tipos": ["prescripcion_rehabilitacion"], "alternativos": ["orden_medica_otra"], "obs_alternativo": "Orden médica en otro formato: verificar que sea el formulario 'Prescripción médica - Prestaciones de rehabilitación'.", "falta": "Orden médica de rehabilitación no identificada."},
-        {"id": "informe_inicial", "nombre": "Informe de evaluación inicial", "tipos": ["informe_inicial"], "cuando": {"tipo_solicitud": "nueva"}, "falta": "Informe de evaluación inicial no identificado."},
-        {"id": "informe_evolutivo", "nombre": "Informe evolutivo", "tipos": ["informe_evolutivo"], "cuando": {"tipo_solicitud": "continuidad"}, "falta": "Informe evolutivo no identificado."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "presupuesto", "nombre": "Presupuesto prestacional", "tipos": ["presupuesto_profesional", "presupuesto_institucion_rehabilitacion"], "alternativos": ["presupuesto_otro"], "obs_alternativo": "Presupuesto en otro formato: verificar que use el formulario oficial.", "falta": "Presupuesto prestacional no identificado."},
-        {"id": "trabajo_coordinado", "nombre": "Constancia de trabajo coordinado (si no es un equipo)", "tipos": ["trabajo_coordinado"], "cuando": {"prestador": "particular"}, "opcional": true, "falta": "Constancia de trabajo coordinado no identificada (requerida si la prestación no la brinda un equipo)."},
-        {"id": "titulo", "nombre": "Título habilitante de cada profesional (frente y dorso)", "tipos": ["titulo_habilitante"], "cuando": {"prestador": "particular"}, "falta": "Título habilitante (frente y dorso) no identificado."},
-        {"id": "rnp", "nombre": "Inscripción en el RNP (SSSalud)", "tipos": ["rnp"], "falta": "Constancia de inscripción en el RNP no identificada."},
-        {"id": "arca", "nombre": "Constancia de inscripción en AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU emitido por el banco", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación en cuenta bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Prescripción médica - Prestaciones de rehabilitación",
+          "tipos": [
+            "prescripcion_rehabilitacion"
+          ],
+          "alternativos": [
+            "orden_medica_otra"
+          ],
+          "obs_alternativo": "Orden médica en otro formato: verificar que sea el formulario 'Prescripción médica - Prestaciones de rehabilitación'.",
+          "falta": "Orden médica de rehabilitación no identificada."
+        },
+        {
+          "id": "informe_inicial",
+          "nombre": "Informe de evaluación inicial",
+          "tipos": [
+            "informe_inicial"
+          ],
+          "cuando": {
+            "tipo_solicitud": "nueva"
+          },
+          "falta": "Informe de evaluación inicial no identificado."
+        },
+        {
+          "id": "informe_evolutivo",
+          "nombre": "Informe evolutivo",
+          "tipos": [
+            "informe_evolutivo"
+          ],
+          "cuando": {
+            "tipo_solicitud": "continuidad"
+          },
+          "falta": "Informe evolutivo no identificado."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto prestacional",
+          "tipos": [
+            "presupuesto_profesional",
+            "presupuesto_institucion_rehabilitacion"
+          ],
+          "alternativos": [
+            "presupuesto_otro"
+          ],
+          "obs_alternativo": "Presupuesto en otro formato: verificar que use el formulario oficial.",
+          "falta": "Presupuesto prestacional no identificado."
+        },
+        {
+          "id": "trabajo_coordinado",
+          "nombre": "Constancia de trabajo coordinado (si no es un equipo)",
+          "tipos": [
+            "trabajo_coordinado"
+          ],
+          "cuando": {
+            "prestador": "particular"
+          },
+          "opcional": true,
+          "falta": "Constancia de trabajo coordinado no identificada (requerida si la prestación no la brinda un equipo)."
+        },
+        {
+          "id": "titulo",
+          "nombre": "Título habilitante de cada profesional (frente y dorso)",
+          "tipos": [
+            "titulo_habilitante"
+          ],
+          "cuando": {
+            "prestador": "particular"
+          },
+          "falta": "Título habilitante (frente y dorso) no identificado."
+        },
+        {
+          "id": "rnp",
+          "nombre": "Inscripción en el RNP (SSSalud)",
+          "tipos": [
+            "rnp"
+          ],
+          "falta": "Constancia de inscripción en el RNP no identificada."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia de inscripción en AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU emitido por el banco",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación en cuenta bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     },
     {
@@ -44,16 +235,104 @@
       "nombre": "Módulo de estimulación temprana",
       "fuente": "Estimulación Temprana 2024",
       "requisitos": [
-        {"id": "orden", "nombre": "Prescripción médica - Prestaciones de rehabilitación", "tipos": ["prescripcion_rehabilitacion"], "alternativos": ["orden_medica_otra"], "obs_alternativo": "Orden médica en otro formato: verificar formulario oficial.", "falta": "Orden médica de estimulación temprana no identificada."},
-        {"id": "informe_inicial", "nombre": "Informe de evaluación inicial", "tipos": ["informe_inicial"], "cuando": {"tipo_solicitud": "nueva"}, "falta": "Informe de evaluación inicial no identificado."},
-        {"id": "informe_evolutivo", "nombre": "Informe evolutivo", "tipos": ["informe_evolutivo"], "cuando": {"tipo_solicitud": "continuidad"}, "falta": "Informe evolutivo no identificado."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "presupuesto", "nombre": "Presupuesto prestacional", "tipos": ["presupuesto_institucion_rehabilitacion", "presupuesto_profesional"], "alternativos": ["presupuesto_otro"], "obs_alternativo": "Presupuesto en otro formato: verificar formulario oficial.", "falta": "Presupuesto prestacional no identificado."},
-        {"id": "titulo", "nombre": "Título habilitante + especialización en estimulación temprana (equipo)", "tipos": ["titulo_habilitante"], "cuando": {"prestador": "particular"}, "falta": "Título habilitante con especialización en estimulación temprana no identificado."},
-        {"id": "rnp", "nombre": "RNP (profesionales) o inscripción como Centro de Estimulación Temprana", "tipos": ["rnp"], "falta": "Inscripción en el RNP de la SSSalud no identificada."},
-        {"id": "arca", "nombre": "Constancia de inscripción en AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU emitido por el banco", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación en cuenta bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Prescripción médica - Prestaciones de rehabilitación",
+          "tipos": [
+            "prescripcion_rehabilitacion"
+          ],
+          "alternativos": [
+            "orden_medica_otra"
+          ],
+          "obs_alternativo": "Orden médica en otro formato: verificar formulario oficial.",
+          "falta": "Orden médica de estimulación temprana no identificada."
+        },
+        {
+          "id": "informe_inicial",
+          "nombre": "Informe de evaluación inicial",
+          "tipos": [
+            "informe_inicial"
+          ],
+          "cuando": {
+            "tipo_solicitud": "nueva"
+          },
+          "falta": "Informe de evaluación inicial no identificado."
+        },
+        {
+          "id": "informe_evolutivo",
+          "nombre": "Informe evolutivo",
+          "tipos": [
+            "informe_evolutivo"
+          ],
+          "cuando": {
+            "tipo_solicitud": "continuidad"
+          },
+          "falta": "Informe evolutivo no identificado."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto prestacional",
+          "tipos": [
+            "presupuesto_institucion_rehabilitacion",
+            "presupuesto_profesional"
+          ],
+          "alternativos": [
+            "presupuesto_otro"
+          ],
+          "obs_alternativo": "Presupuesto en otro formato: verificar formulario oficial.",
+          "falta": "Presupuesto prestacional no identificado."
+        },
+        {
+          "id": "titulo",
+          "nombre": "Título habilitante + especialización en estimulación temprana (equipo)",
+          "tipos": [
+            "titulo_habilitante"
+          ],
+          "cuando": {
+            "prestador": "particular"
+          },
+          "falta": "Título habilitante con especialización en estimulación temprana no identificado."
+        },
+        {
+          "id": "rnp",
+          "nombre": "RNP (profesionales) o inscripción como Centro de Estimulación Temprana",
+          "tipos": [
+            "rnp"
+          ],
+          "falta": "Inscripción en el RNP de la SSSalud no identificada."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia de inscripción en AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU emitido por el banco",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación en cuenta bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     },
     {
@@ -61,16 +340,104 @@
       "nombre": "Prestaciones terapéuticas-educativas (CET / Centro de Día)",
       "fuente": "Terapéuticas-Educativas CET - Centro de Día 2024",
       "requisitos": [
-        {"id": "orden", "nombre": "Prescripción médica - Prestaciones terapéuticas/educativas", "tipos": ["prescripcion_terapeutico_educativa"], "alternativos": ["orden_medica_otra"], "obs_alternativo": "Orden médica en otro formato: verificar formulario oficial (debe indicar jornada).", "falta": "Orden médica de prestaciones terapéuticas/educativas no identificada."},
-        {"id": "fim", "nombre": "FIM + informe de apoyos (si solicita dependencia)", "tipos": ["fim"], "cuando": {"dependencia": "si"}, "falta": "FIM no identificado para evaluar dependencia (confeccionado por Lic. en Terapia Ocupacional)."},
-        {"id": "informe_inicial", "nombre": "Informe de evaluación inicial", "tipos": ["informe_inicial"], "cuando": {"tipo_solicitud": "nueva"}, "falta": "Informe de evaluación inicial no identificado."},
-        {"id": "informe_evolutivo", "nombre": "Informe evolutivo", "tipos": ["informe_evolutivo"], "cuando": {"tipo_solicitud": "continuidad"}, "falta": "Informe evolutivo no identificado."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "presupuesto", "nombre": "Presupuesto prestacional terapéutico/educativo", "tipos": ["presupuesto_terapeutico_educativo"], "alternativos": ["presupuesto_otro", "presupuesto_institucion_rehabilitacion"], "obs_alternativo": "Presupuesto en otro formato: verificar formulario oficial (categoría, jornada, dependencia).", "falta": "Presupuesto prestacional de prestaciones terapéuticas/educativas no identificado."},
-        {"id": "categorizacion", "nombre": "Categorización de la institución (ANDIS)", "tipos": ["categorizacion"], "falta": "Categorización de la institución no identificada."},
-        {"id": "arca", "nombre": "Constancia de inscripción en AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU emitido por el banco", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación en cuenta bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Prescripción médica - Prestaciones terapéuticas/educativas",
+          "tipos": [
+            "prescripcion_terapeutico_educativa"
+          ],
+          "alternativos": [
+            "orden_medica_otra"
+          ],
+          "obs_alternativo": "Orden médica en otro formato: verificar formulario oficial (debe indicar jornada).",
+          "falta": "Orden médica de prestaciones terapéuticas/educativas no identificada."
+        },
+        {
+          "id": "fim",
+          "nombre": "FIM + informe de apoyos (si solicita dependencia)",
+          "tipos": [
+            "fim"
+          ],
+          "cuando": {
+            "dependencia": "si"
+          },
+          "falta": "FIM no identificado para evaluar dependencia (confeccionado por Lic. en Terapia Ocupacional)."
+        },
+        {
+          "id": "informe_inicial",
+          "nombre": "Informe de evaluación inicial",
+          "tipos": [
+            "informe_inicial"
+          ],
+          "cuando": {
+            "tipo_solicitud": "nueva"
+          },
+          "falta": "Informe de evaluación inicial no identificado."
+        },
+        {
+          "id": "informe_evolutivo",
+          "nombre": "Informe evolutivo",
+          "tipos": [
+            "informe_evolutivo"
+          ],
+          "cuando": {
+            "tipo_solicitud": "continuidad"
+          },
+          "falta": "Informe evolutivo no identificado."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto prestacional terapéutico/educativo",
+          "tipos": [
+            "presupuesto_terapeutico_educativo"
+          ],
+          "alternativos": [
+            "presupuesto_otro",
+            "presupuesto_institucion_rehabilitacion"
+          ],
+          "obs_alternativo": "Presupuesto en otro formato: verificar formulario oficial (categoría, jornada, dependencia).",
+          "falta": "Presupuesto prestacional de prestaciones terapéuticas/educativas no identificado."
+        },
+        {
+          "id": "categorizacion",
+          "nombre": "Categorización de la institución (ANDIS)",
+          "tipos": [
+            "categorizacion"
+          ],
+          "falta": "Categorización de la institución no identificada."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia de inscripción en AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU emitido por el banco",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación en cuenta bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     },
     {
@@ -78,18 +445,113 @@
       "nombre": "Transporte especial",
       "fuente": "Transporte Especial 2024",
       "requisitos": [
-        {"id": "conformidad", "nombre": "Conformidad de Transporte (SSSalud)", "tipos": ["conformidad_transporte"], "falta": "Conformidad de Transporte no identificada."},
-        {"id": "orden", "nombre": "Prescripción médica - Transporte especial", "tipos": ["prescripcion_transporte"], "alternativos": ["orden_medica_otra"], "obs_alternativo": "Orden en otro formato: debe ser específica de transporte y justificar la imposibilidad de usar transporte público.", "falta": "Orden médica específica de transporte no identificada."},
-        {"id": "fim", "nombre": "FIM (si solicita dependencia)", "tipos": ["fim"], "cuando": {"dependencia": "si"}, "falta": "FIM no identificado para evaluar dependencia en transporte."},
-        {"id": "presupuesto", "nombre": "Presupuesto de transporte", "tipos": ["presupuesto_transporte"], "alternativos": ["presupuesto_otro"], "obs_alternativo": "Presupuesto en otro formato: verificar km mensuales, valor por km y diagrama de traslado.", "falta": "Presupuesto de transporte no identificado."},
-        {"id": "habilitacion", "nombre": "Habilitación municipal vigente", "tipos": ["habilitacion_transporte"], "falta": "Habilitación municipal del transportista no identificada."},
-        {"id": "poliza", "nombre": "Póliza de seguro vigente", "tipos": ["poliza_seguro"], "falta": "Póliza de seguro vigente no identificada."},
-        {"id": "vtv", "nombre": "VTV vigente", "tipos": ["vtv"], "falta": "VTV vigente no identificada."},
-        {"id": "licencia", "nombre": "Licencia de conducir vigente", "tipos": ["licencia_conducir"], "falta": "Licencia de conducir vigente no identificada."},
-        {"id": "arca", "nombre": "Constancia AFIP/ARCA del transportista", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA del transportista no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU (titular = titular de la habilitación)", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU del transportista no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación en cuenta bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."},
-        {"id": "recorrido", "nombre": "Imagen del recorrido (Google Maps)", "tipos": ["recorrido_maps"], "falta": "Recorrido según Google Maps no identificado."}
+        {
+          "id": "conformidad",
+          "nombre": "Conformidad de Transporte (SSSalud)",
+          "tipos": [
+            "conformidad_transporte"
+          ],
+          "falta": "Conformidad de Transporte no identificada."
+        },
+        {
+          "id": "orden",
+          "nombre": "Prescripción médica - Transporte especial",
+          "tipos": [
+            "prescripcion_transporte"
+          ],
+          "alternativos": [
+            "orden_medica_otra"
+          ],
+          "obs_alternativo": "Orden en otro formato: debe ser específica de transporte y justificar la imposibilidad de usar transporte público.",
+          "falta": "Orden médica específica de transporte no identificada."
+        },
+        {
+          "id": "fim",
+          "nombre": "FIM (si solicita dependencia)",
+          "tipos": [
+            "fim"
+          ],
+          "cuando": {
+            "dependencia": "si"
+          },
+          "falta": "FIM no identificado para evaluar dependencia en transporte."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto de transporte",
+          "tipos": [
+            "presupuesto_transporte"
+          ],
+          "alternativos": [
+            "presupuesto_otro"
+          ],
+          "obs_alternativo": "Presupuesto en otro formato: verificar km mensuales, valor por km y diagrama de traslado.",
+          "falta": "Presupuesto de transporte no identificado."
+        },
+        {
+          "id": "habilitacion",
+          "nombre": "Habilitación municipal vigente",
+          "tipos": [
+            "habilitacion_transporte"
+          ],
+          "falta": "Habilitación municipal del transportista no identificada."
+        },
+        {
+          "id": "poliza",
+          "nombre": "Póliza de seguro vigente",
+          "tipos": [
+            "poliza_seguro"
+          ],
+          "falta": "Póliza de seguro vigente no identificada."
+        },
+        {
+          "id": "vtv",
+          "nombre": "VTV vigente",
+          "tipos": [
+            "vtv"
+          ],
+          "falta": "VTV vigente no identificada."
+        },
+        {
+          "id": "licencia",
+          "nombre": "Licencia de conducir vigente",
+          "tipos": [
+            "licencia_conducir"
+          ],
+          "falta": "Licencia de conducir vigente no identificada."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia AFIP/ARCA del transportista",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA del transportista no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU (titular = titular de la habilitación)",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU del transportista no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación en cuenta bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        },
+        {
+          "id": "recorrido",
+          "nombre": "Imagen del recorrido (Google Maps)",
+          "tipos": [
+            "recorrido_maps"
+          ],
+          "falta": "Recorrido según Google Maps no identificado."
+        }
       ]
     },
     {
@@ -98,16 +560,94 @@
       "provisoria": true,
       "fuente": "Reglas del flujo anterior (falta instructivo)",
       "requisitos": [
-        {"id": "orden", "nombre": "Orden médica de Escolaridad Especial", "tipos": ["orden_medica_otra", "prescripcion_terapeutico_educativa"], "falta": "Orden médica de Escolaridad Especial no identificada."},
-        {"id": "alumno_regular", "nombre": "Constancia de alumno regular con CUE", "tipos": ["alumno_regular"], "falta": "Constancia de alumno regular con CUE no identificada."},
-        {"id": "informe_inicial", "nombre": "Informe de evaluación inicial", "tipos": ["informe_inicial"], "cuando": {"tipo_solicitud": "nueva"}, "falta": "Informe de evaluación inicial no identificado."},
-        {"id": "informe_evolutivo", "nombre": "Informe evolutivo", "tipos": ["informe_evolutivo"], "cuando": {"tipo_solicitud": "continuidad"}, "falta": "Informe evolutivo no identificado."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "presupuesto", "nombre": "Presupuesto de la institución educativa", "tipos": ["presupuesto_otro", "presupuesto_terapeutico_educativo"], "falta": "Presupuesto prestacional de institución educativa no identificado."},
-        {"id": "categorizacion", "nombre": "Categorización de la institución", "tipos": ["categorizacion"], "falta": "Categorización de la institución no identificada."},
-        {"id": "arca", "nombre": "Constancia AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Orden médica de Escolaridad Especial",
+          "tipos": [
+            "orden_medica_otra",
+            "prescripcion_terapeutico_educativa"
+          ],
+          "falta": "Orden médica de Escolaridad Especial no identificada."
+        },
+        {
+          "id": "alumno_regular",
+          "nombre": "Constancia de alumno regular con CUE",
+          "tipos": [
+            "alumno_regular"
+          ],
+          "falta": "Constancia de alumno regular con CUE no identificada."
+        },
+        {
+          "id": "informe_inicial",
+          "nombre": "Informe de evaluación inicial",
+          "tipos": [
+            "informe_inicial"
+          ],
+          "cuando": {
+            "tipo_solicitud": "nueva"
+          },
+          "falta": "Informe de evaluación inicial no identificado."
+        },
+        {
+          "id": "informe_evolutivo",
+          "nombre": "Informe evolutivo",
+          "tipos": [
+            "informe_evolutivo"
+          ],
+          "cuando": {
+            "tipo_solicitud": "continuidad"
+          },
+          "falta": "Informe evolutivo no identificado."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto de la institución educativa",
+          "tipos": [
+            "presupuesto_otro",
+            "presupuesto_terapeutico_educativo"
+          ],
+          "falta": "Presupuesto prestacional de institución educativa no identificado."
+        },
+        {
+          "id": "categorizacion",
+          "nombre": "Categorización de la institución",
+          "tipos": [
+            "categorizacion"
+          ],
+          "falta": "Categorización de la institución no identificada."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     },
     {
@@ -116,15 +656,78 @@
       "provisoria": true,
       "fuente": "Reglas del flujo anterior (falta instructivo)",
       "requisitos": [
-        {"id": "orden", "nombre": "Orden médica del Módulo de Apoyo a la Integración Escolar", "tipos": ["orden_medica_otra"], "falta": "Orden médica de Módulo de Apoyo a la Integración Escolar no identificada."},
-        {"id": "alumno_regular", "nombre": "Constancia de alumno regular con CUE", "tipos": ["alumno_regular"], "falta": "Constancia de alumno regular con CUE no identificada."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "adaptacion", "nombre": "Adaptación curricular", "tipos": ["adaptacion_curricular"], "falta": "Adaptación curricular no identificada."},
-        {"id": "acta", "nombre": "Acta de acuerdo", "tipos": ["acta_acuerdo"], "falta": "Acta de Acuerdo de Apoyo a la Integración Escolar no identificada."},
-        {"id": "presupuesto", "nombre": "Presupuesto del módulo", "tipos": ["presupuesto_otro"], "falta": "Presupuesto prestacional del módulo no identificado."},
-        {"id": "arca", "nombre": "Constancia AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Orden médica del Módulo de Apoyo a la Integración Escolar",
+          "tipos": [
+            "orden_medica_otra"
+          ],
+          "falta": "Orden médica de Módulo de Apoyo a la Integración Escolar no identificada."
+        },
+        {
+          "id": "alumno_regular",
+          "nombre": "Constancia de alumno regular con CUE",
+          "tipos": [
+            "alumno_regular"
+          ],
+          "falta": "Constancia de alumno regular con CUE no identificada."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "adaptacion",
+          "nombre": "Adaptación curricular",
+          "tipos": [
+            "adaptacion_curricular"
+          ],
+          "falta": "Adaptación curricular no identificada."
+        },
+        {
+          "id": "acta",
+          "nombre": "Acta de acuerdo",
+          "tipos": [
+            "acta_acuerdo"
+          ],
+          "falta": "Acta de Acuerdo de Apoyo a la Integración Escolar no identificada."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto del módulo",
+          "tipos": [
+            "presupuesto_otro"
+          ],
+          "falta": "Presupuesto prestacional del módulo no identificado."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     },
     {
@@ -133,28 +736,217 @@
       "provisoria": true,
       "fuente": "Reglas del flujo anterior (falta instructivo)",
       "requisitos": [
-        {"id": "orden", "nombre": "Orden médica de Maestra de Apoyo", "tipos": ["orden_medica_otra"], "falta": "Orden médica de Maestra de Apoyo no identificada."},
-        {"id": "alumno_regular", "nombre": "Constancia de alumno regular con CUE", "tipos": ["alumno_regular"], "falta": "Constancia de alumno regular con CUE no identificada."},
-        {"id": "plan", "nombre": "Plan de abordaje individual", "tipos": ["plan_abordaje"], "falta": "Plan de abordaje individual no identificado."},
-        {"id": "adaptacion", "nombre": "Adaptación curricular", "tipos": ["adaptacion_curricular"], "falta": "Adaptación curricular no identificada."},
-        {"id": "acta", "nombre": "Acta de acuerdo de Maestra de Apoyo", "tipos": ["acta_acuerdo"], "falta": "Acta de Acuerdo de Maestra de Apoyo no identificada."},
-        {"id": "presupuesto", "nombre": "Presupuesto de Maestra de Apoyo", "tipos": ["presupuesto_otro"], "falta": "Presupuesto prestacional de Maestra de Apoyo no identificado."},
-        {"id": "titulo", "nombre": "Título habilitante (frente y dorso) y analítico", "tipos": ["titulo_habilitante"], "falta": "Título habilitante frente y dorso no identificado."},
-        {"id": "arca", "nombre": "Constancia AFIP/ARCA", "tipos": ["constancia_arca"], "falta": "Constancia de inscripción en AFIP/ARCA no identificada."},
-        {"id": "cbu", "nombre": "Comprobante de CBU", "tipos": ["comprobante_cbu"], "falta": "Comprobante de CBU no identificado."},
-        {"id": "acreditacion", "nombre": "Formulario de acreditación bancaria", "tipos": ["acreditacion_bancaria"], "falta": "Formulario de acreditación en cuenta bancaria no identificado."}
+        {
+          "id": "orden",
+          "nombre": "Orden médica de Maestra de Apoyo",
+          "tipos": [
+            "orden_medica_otra"
+          ],
+          "falta": "Orden médica de Maestra de Apoyo no identificada."
+        },
+        {
+          "id": "alumno_regular",
+          "nombre": "Constancia de alumno regular con CUE",
+          "tipos": [
+            "alumno_regular"
+          ],
+          "falta": "Constancia de alumno regular con CUE no identificada."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "adaptacion",
+          "nombre": "Adaptación curricular",
+          "tipos": [
+            "adaptacion_curricular"
+          ],
+          "falta": "Adaptación curricular no identificada."
+        },
+        {
+          "id": "acta",
+          "nombre": "Acta de acuerdo de Maestra de Apoyo",
+          "tipos": [
+            "acta_acuerdo"
+          ],
+          "falta": "Acta de Acuerdo de Maestra de Apoyo no identificada."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto de Maestra de Apoyo",
+          "tipos": [
+            "presupuesto_otro"
+          ],
+          "falta": "Presupuesto prestacional de Maestra de Apoyo no identificado."
+        },
+        {
+          "id": "titulo",
+          "nombre": "Título habilitante (frente y dorso) y analítico",
+          "tipos": [
+            "titulo_habilitante"
+          ],
+          "falta": "Título habilitante frente y dorso no identificado."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
+      ]
+    },
+    {
+      "id": "acompanante_terapeutico",
+      "nombre": "Acompañante terapéutico",
+      "provisoria": true,
+      "fuente": "Provisorio: requisitos generales de rehabilitación (falta instructivo)",
+      "requisitos": [
+        {
+          "id": "orden",
+          "nombre": "Orden médica de acompañamiento terapéutico (modalidad, horas y período)",
+          "tipos": [
+            "orden_medica_otra",
+            "prescripcion_rehabilitacion"
+          ],
+          "falta": "Orden médica de acompañamiento terapéutico no identificada."
+        },
+        {
+          "id": "informe_inicial",
+          "nombre": "Informe de evaluación inicial",
+          "tipos": [
+            "informe_inicial"
+          ],
+          "cuando": {
+            "tipo_solicitud": "nueva"
+          },
+          "falta": "Informe de evaluación inicial no identificado."
+        },
+        {
+          "id": "informe_evolutivo",
+          "nombre": "Informe evolutivo",
+          "tipos": [
+            "informe_evolutivo"
+          ],
+          "cuando": {
+            "tipo_solicitud": "continuidad"
+          },
+          "falta": "Informe evolutivo no identificado."
+        },
+        {
+          "id": "plan",
+          "nombre": "Plan de abordaje individual",
+          "tipos": [
+            "plan_abordaje"
+          ],
+          "falta": "Plan de abordaje individual no identificado."
+        },
+        {
+          "id": "presupuesto",
+          "nombre": "Presupuesto prestacional (horas y valor)",
+          "tipos": [
+            "presupuesto_profesional",
+            "presupuesto_otro",
+            "presupuesto_institucion_rehabilitacion"
+          ],
+          "falta": "Presupuesto prestacional de acompañamiento terapéutico no identificado."
+        },
+        {
+          "id": "titulo",
+          "nombre": "Título o certificado de formación como acompañante terapéutico",
+          "tipos": [
+            "titulo_habilitante"
+          ],
+          "cuando": {
+            "prestador": "particular"
+          },
+          "falta": "Título o certificado de acompañante terapéutico no identificado."
+        },
+        {
+          "id": "arca",
+          "nombre": "Constancia de inscripción en AFIP/ARCA",
+          "tipos": [
+            "constancia_arca"
+          ],
+          "falta": "Constancia de inscripción en AFIP/ARCA no identificada."
+        },
+        {
+          "id": "cbu",
+          "nombre": "Comprobante de CBU emitido por el banco",
+          "tipos": [
+            "comprobante_cbu"
+          ],
+          "falta": "Comprobante de CBU emitido por entidad bancaria no identificado."
+        },
+        {
+          "id": "acreditacion",
+          "nombre": "Formulario de acreditación en cuenta bancaria",
+          "tipos": [
+            "acreditacion_bancaria"
+          ],
+          "falta": "Formulario de acreditación en cuenta bancaria no identificado."
+        }
       ]
     }
   ],
   "orden_armado": [
-    "datos_personales", "cud", "dni", "conformidad_prestacional", "conformidad_transporte", "nota_cambio_prestador", "nota_baja_prestacion",
-    "resumen_hc", "fim",
-    "prescripcion_rehabilitacion", "prescripcion_terapeutico_educativa", "prescripcion_transporte", "orden_medica_otra",
-    "informe_inicial", "informe_evolutivo", "plan_abordaje",
-    "alumno_regular", "acta_acuerdo", "adaptacion_curricular",
-    "presupuesto_profesional", "presupuesto_institucion_rehabilitacion", "presupuesto_terapeutico_educativo", "presupuesto_transporte", "presupuesto_otro",
-    "trabajo_coordinado", "titulo_habilitante", "rnp", "categorizacion",
-    "habilitacion_transporte", "poliza_seguro", "vtv", "licencia_conducir", "recorrido_maps",
-    "constancia_arca", "comprobante_cbu", "acreditacion_bancaria"
+    "datos_personales",
+    "cud",
+    "dni",
+    "conformidad_prestacional",
+    "conformidad_transporte",
+    "nota_cambio_prestador",
+    "nota_baja_prestacion",
+    "resumen_hc",
+    "fim",
+    "prescripcion_rehabilitacion",
+    "prescripcion_terapeutico_educativa",
+    "prescripcion_transporte",
+    "orden_medica_otra",
+    "informe_inicial",
+    "informe_evolutivo",
+    "plan_abordaje",
+    "alumno_regular",
+    "acta_acuerdo",
+    "adaptacion_curricular",
+    "presupuesto_profesional",
+    "presupuesto_institucion_rehabilitacion",
+    "presupuesto_terapeutico_educativo",
+    "presupuesto_transporte",
+    "presupuesto_otro",
+    "trabajo_coordinado",
+    "titulo_habilitante",
+    "rnp",
+    "categorizacion",
+    "habilitacion_transporte",
+    "poliza_seguro",
+    "vtv",
+    "licencia_conducir",
+    "recorrido_maps",
+    "constancia_arca",
+    "comprobante_cbu",
+    "acreditacion_bancaria"
   ]
 }

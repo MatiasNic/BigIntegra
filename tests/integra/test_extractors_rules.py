@@ -108,3 +108,35 @@ def test_emision_posterior_al_inicio():
     )
     textos = [h["texto"] for h in rules.regla_fechas_y_periodos([orden], [])]
     assert any("posterior al inicio" in t for t in textos)
+
+
+def test_cud_code_has_dates():
+    # Número de CUD ficticio: emitido 15/03/2022, vence 15/03/2027.
+    from app.engine.integra.extractors import find_cud_code
+
+    code = find_cud_code("Certificado N° ARG-01-20123456786-20220315-20270315-BUE-123 otra cosa")
+    assert code["vencimiento"] == "2027-03-15" and code["emision"] == "2022-03-15"
+    # Variantes de la cola vistas en legajos reales (provincia de 2 letras, 5 dígitos, sin cola).
+    for tail in ("-BA-123", "-BUE-12345", "", "-01-123"):
+        assert find_cud_code(f"ARG-01-20123456786-20220315-20270315{tail}")["vencimiento"] == "2027-03-15"
+    # Tolera espacios del OCR y prefijo mal leído.
+    assert (
+        find_cud_code("IRG - 01 - 20123456786 - 20220315 - 20270315 - BUE - 123")["vencimiento"]
+        == "2027-03-15"
+    )
+
+
+def test_cud_vencimiento_prefers_code_over_label():
+    text = (
+        "CERTIFICADO ÚNICO DE DISCAPACIDAD\nVencimiento: 01/01/2020\n"
+        "ARG-01-20123456786-20220315-20270315-BUE-123"
+    )
+    assert extract_fields(text, "cud")["vencimiento"] == "2027-03-15"
+
+
+def test_cue():
+    from app.engine.integra.extractors import find_cue
+
+    assert find_cue("Escuela N° 5 - CUE: 060123400") == "060123400"
+    assert find_cue("C.U.E. N° 0601234-00") == "060123400"
+    assert find_cue("sin clave") == ""

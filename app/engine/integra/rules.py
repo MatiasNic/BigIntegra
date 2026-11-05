@@ -65,9 +65,9 @@ def regla_cud(docs: list[dict], today: date) -> list[dict]:
             )
         else:
             extra = f" (prórroga Res. 1907/2023 hasta {efectivo:%d/%m/%Y})" if efectivo != vto else ""
-            out.append(
-                {"nivel": "ok", "texto": f"CUD vigente, vence {vto:%d/%m/%Y}{extra}.", "paginas": _pages(doc)}
-            )
+            numero = (doc["datos"].get("cud") or {}).get("numero")
+            texto = f"CUD vigente, vence {vto:%d/%m/%Y}{extra}" + (f". N° {numero}" if numero else "") + "."
+            out.append({"nivel": "ok", "texto": texto, "paginas": _pages(doc)})
     return out
 
 
