@@ -49,6 +49,7 @@ class DocType:
     campos: list[str] = field(default_factory=list)
     palabras: list[str] = field(default_factory=list)
     excluye: list[str] = field(default_factory=list)
+    patrones: list[str] = field(default_factory=list)  # regex sobre el texto original
     nota: str = ""
 
 
@@ -122,6 +123,11 @@ def score_type(
         if _has_phrase(text, phrase):
             score += pesos["excluye"]
             hits.append(f"excluye: {phrase}")
+            break
+    for pattern in doc_type.patrones:
+        if re.search(pattern, text, re.IGNORECASE):
+            score += pesos["titulo"]
+            hits.append("título: patrón característico")
             break
     best_title = 0.0
     for phrase in doc_type.titulos:
