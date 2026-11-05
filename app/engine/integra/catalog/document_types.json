@@ -299,7 +299,10 @@
         "maestra de apoyo",
         "integracion escolar",
         "sesiones semanales",
-        "por el periodo"
+        "por el periodo",
+        "acompanante terapeutico",
+        "acompanamiento terapeutico",
+        "horas semanales"
       ],
       "excluye": [
         "condiciones generales para toda la documentacion",
@@ -423,7 +426,10 @@
         "cuit",
         "condicion frente al iva",
         "mensual",
-        "$"
+        "$",
+        "acompanante terapeutico",
+        "valor hora",
+        "horas mensuales"
       ],
       "excluye": [
         "condiciones generales para toda la documentacion",
@@ -653,7 +659,11 @@
         "decano",
         "diploma",
         "registro de titulos",
-        "legalizacion"
+        "legalizacion",
+        "acompanante terapeutico",
+        "certificado de formacion",
+        "curso de formacion",
+        "carga horaria"
       ],
       "palabras": [
         "titulo",

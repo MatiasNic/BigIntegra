@@ -12,6 +12,11 @@ subiendo el último dígito: 0.1.0 → 0.1.1 → 0.1.2… El número vive solo e
 
 ## [0.1.1] - 2026-11-05
 
+### Nuevo
+- **Acompañante terapéutico** como prestación (requisitos provisorios hasta tener su
+  instructivo: orden médica, informes, plan, presupuesto, título o certificado de AT si es
+  particular, ARCA, CBU y formulario bancario).
+
 ### Mejorado
 - **CUD**: se lee el número de certificado (ARG-…) y de él se toma la fecha de
   vencimiento, que viene codificada en el número. Es más confiable que el rótulo
