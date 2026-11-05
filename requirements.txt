@@ -1,0 +1,10 @@
+# Versiones EXACTAS, probadas juntas. Así el .exe compilado dentro de un mes usa las
+# mismas librerías que el que se probó hoy. Para actualizar: cambiar el número,
+# `python -m pip install -r requirements.txt`, probar la app y recién ahí commitear.
+PyMuPDF==1.28.2
+pydantic==2.13.5
+PySide6==6.12.0
+PySide6-Addons==6.12.0
+PySide6-Essentials==6.12.0
+pyinstaller==6.22.3
+pyinstaller-hooks-contrib==2026.8

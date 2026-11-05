@@ -1,0 +1,67 @@
+name: Compilar BigIntegra.exe
+
+# Compila el .exe único (onefile) en una PC Windows de GitHub y lo deja para
+# descargar en la pestaña "Actions" del repositorio (sección "Artifacts").
+#
+# SOLO compila cuando se pide explícitamente (los minutos de GitHub son limitados):
+# - Tag "build-*" (ej. build-20261017): compilación de prueba, queda en Artifacts.
+# - Tag "vX.Y.Z" (ej. v1.4.3): versión publicada, además crea un Release con el .exe.
+# - Manual desde Actions → "Compilar BigIntegra.exe" → "Run workflow" (cuando este
+#   archivo esté en main).
+# Los push comunes NO compilan.
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*", "build-*"]
+
+concurrency:
+  group: build-exe-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: windows-latest
+    timeout-minutes: 40
+    permissions:
+      contents: write   # solo para adjuntar el .exe a un Release en tags vX.Y.Z
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: pip
+
+      - name: Instalar dependencias
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Compilar con PyInstaller
+        run: pyinstaller --noconfirm --clean packaging\BigIntegra_Desktop.spec
+
+      - name: Datos del ejecutable
+        id: exe
+        shell: pwsh
+        run: |
+          $exe = Get-ChildItem dist\*.exe | Select-Object -First 1
+          if (-not $exe) { throw "No se generó el .exe" }
+          $mb = [math]::Round($exe.Length / 1MB, 1)
+          "name=$($exe.BaseName)" >> $env:GITHUB_OUTPUT
+          "### $($exe.Name) — $mb MB" >> $env:GITHUB_STEP_SUMMARY
+          "Commit: ${{ github.sha }} (rama ${{ github.ref_name }})" >> $env:GITHUB_STEP_SUMMARY
+
+      - name: Subir el .exe (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          # Sin el nombre de la rama: puede tener "/" (claude/...), que no se admite.
+          name: ${{ steps.exe.outputs.name }}-${{ github.run_number }}
+          path: dist/*.exe
+          retention-days: 14
+          compression-level: 0   # el .exe ya viene comprimido
+
+      - name: Release (solo tags vX.Y.Z)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*.exe

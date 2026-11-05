@@ -1,0 +1,25 @@
+{
+  // F5 en VS Code: corre la app con el depurador (breakpoints en el código Python).
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Big Integra: ejecutar app",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/main.py",
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": true
+    },
+    {
+      "name": "BigPDF: tests (pytest)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}

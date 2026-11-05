@@ -1,0 +1,998 @@
+{
+  "version": "2024-instructivos",
+  "nota": "Basado en los instructivos de Integra/Discapacidad vigentes en 2024 (Requisitos Generales, Rehabilitación, Estimulación Temprana, Terapéuticas-Educativas, Transporte, Información Importante). Actualizar títulos/pies cuando lleguen los formularios nuevos. Todo se compara contra texto normalizado: minúsculas, sin tildes, signos ignorados.",
+  "pesos": {
+    "titulo": 10,
+    "pie": 6,
+    "campo": 2,
+    "campo_max": 8,
+    "palabra": 1,
+    "palabra_max": 4,
+    "excluye": -15,
+    "titulo_parcial": 0.5
+  },
+  "tipos": [
+    {
+      "id": "instructivo",
+      "nombre": "Instructivo (no se presenta)",
+      "grupo": "descartable",
+      "titulos": [
+        "condiciones generales para toda la documentacion",
+        "informacion importante para cumplimentar los formularios",
+        "confeccionado firmado y sellado por el profesional o institucion que lo llevara a cabo",
+        "confeccionado firmado y sellado por la institucion que lo llevara a cabo",
+        "confeccionado firmado y sellado por el equipo",
+        "emitido por entidad bancaria junto al formulario de acreditacion",
+        "imagen del recorrido segun google maps",
+        "habilitacion municipal de la empresa de transporte copia vigente"
+      ],
+      "campos": [
+        "confeccionado firmado y sellado por",
+        "se solicitara exclusivamente",
+        "deberan ser presentadas dentro de los 60 dias"
+      ],
+      "excluye": [],
+      "prioritario": true,
+      "nota": "Hojas explicativas de los instructivos. Si aparece una de estas frases, la página es instructivo (no se presenta en el legajo)."
+    },
+    {
+      "id": "datos_personales",
+      "nombre": "Formulario de datos personales",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "formulario de datos personales"
+      ],
+      "pies": [
+        "requisitos generales 1"
+      ],
+      "campos": [
+        "apellido y nombre del titular",
+        "detallar las prestaciones que solicitara",
+        "telefono alternativo",
+        "fecha de nacimiento"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "conformidad_prestacional",
+      "nombre": "Conformidad Prestacional",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "conformidad prestacional"
+      ],
+      "pies": [
+        "requisitos generales 2"
+      ],
+      "campos": [
+        "doy mi conformidad respecto a la s prestacion es",
+        "periodo de la prestacion",
+        "comprendiendo las alternativas disponibles",
+        "si el firmante no es la persona con discapacidad"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "nota de cambio de prestador",
+        "conformidad al diagrama de traslados"
+      ]
+    },
+    {
+      "id": "conformidad_transporte",
+      "nombre": "Conformidad de Transporte",
+      "grupo": "transporte",
+      "oficial": true,
+      "titulos": [
+        "conformidad de transporte",
+        "conformidad transporte"
+      ],
+      "pies": [
+        "requisitos generales 3",
+        "transporte especial 1"
+      ],
+      "campos": [
+        "conformidad al diagrama de traslados",
+        "ley n 19 279",
+        "autorizo el diagrama de traslados",
+        "declaracion jurada"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "fim",
+      "nombre": "Medida de Independencia Funcional (FIM)",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "medida de independencia funcional fim",
+        "tabla de puntuacion de niveles de independencia funcional",
+        "descripcion de las actividades",
+        "evaluacion institucional"
+      ],
+      "pies": [
+        "requisitos generales 4",
+        "requisitos generales 5",
+        "requisitos generales 6",
+        "requisitos generales 7",
+        "requisitos generales 8",
+        "requisitos generales 9"
+      ],
+      "campos": [
+        "puntaje fim total",
+        "autocuidado",
+        "control de esfinteres",
+        "transferencias",
+        "locomocion",
+        "interaccion social",
+        "resolucion de problemas",
+        "vestido parte superior",
+        "aseo personal"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "resumen de historia clinica"
+      ]
+    },
+    {
+      "id": "resumen_hc",
+      "nombre": "Resumen de Historia Clínica",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "resumen de historia clinica"
+      ],
+      "pies": [
+        "requisitos generales 10"
+      ],
+      "campos": [
+        "diagnostico capacidad funcional",
+        "antecedentes significativos de la historia clinica",
+        "prestaciones que recibe actualmente",
+        "valoracion por escala fim",
+        "dependiente autovalido",
+        "nombre y apellido de la madre padre tutor"
+      ],
+      "palabras": [
+        "historia clinica",
+        "antecedentes",
+        "evolucion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "coincidencia entre resumen de historia clinica"
+      ]
+    },
+    {
+      "id": "nota_cambio_prestador",
+      "nombre": "Nota de cambio de prestador",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "nota de cambio de prestador"
+      ],
+      "pies": [
+        "requisitos generales 11"
+      ],
+      "campos": [
+        "solicitar un cambio de prestador",
+        "nuevo prestador",
+        "mes de inicio",
+        "se deja constancia de la baja del prestador"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "nota de cambio de prestador nota de baja"
+      ]
+    },
+    {
+      "id": "nota_baja_prestacion",
+      "nombre": "Nota de baja de prestación",
+      "grupo": "general",
+      "oficial": true,
+      "titulos": [
+        "nota de baja de prestacion"
+      ],
+      "campos": [
+        "solicitar la baja de la prestacion",
+        "a partir de la fecha"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "nota de cambio de prestador nota de baja"
+      ]
+    },
+    {
+      "id": "prescripcion_rehabilitacion",
+      "nombre": "Prescripción médica - Rehabilitación",
+      "grupo": "orden_medica",
+      "oficial": true,
+      "titulos": [
+        "prescripcion medica prestaciones de rehabilitacion"
+      ],
+      "pies": [
+        "tratamientos de rehabilitacion 1",
+        "modulo de estimulacion temprana 1"
+      ],
+      "campos": [
+        "cantidad de sesiones semanales",
+        "firma y sello del medico tratante",
+        "periodo desde",
+        "diagnostico",
+        "prestacion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto prestacional"
+      ]
+    },
+    {
+      "id": "prescripcion_terapeutico_educativa",
+      "nombre": "Prescripción médica - Terapéutico-Educativa",
+      "grupo": "orden_medica",
+      "oficial": true,
+      "titulos": [
+        "prescripcion medica prestaciones terapeuticas educativas"
+      ],
+      "pies": [
+        "prestaciones terapeuticas educativas 1"
+      ],
+      "campos": [
+        "tipo de jornada",
+        "simple doble",
+        "dependencia si no",
+        "firma y sello del medico tratante",
+        "periodo desde"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto prestacional"
+      ]
+    },
+    {
+      "id": "prescripcion_transporte",
+      "nombre": "Prescripción médica - Transporte especial",
+      "grupo": "orden_medica",
+      "oficial": true,
+      "titulos": [
+        "prescripcion medica transporte especial a las terapias y o escolaridad"
+      ],
+      "pies": [
+        "transporte especial 2"
+      ],
+      "campos": [
+        "justificacion medica",
+        "fundamentar la imposibilidad",
+        "transporte publico",
+        "dependencia si no",
+        "firma y sello del medico tratante"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto de transporte"
+      ]
+    },
+    {
+      "id": "orden_medica_otra",
+      "nombre": "Orden médica (otro formato)",
+      "grupo": "orden_medica",
+      "nota": "Órdenes en recetario propio o de prestaciones sin formulario cargado (Escolaridad Especial, MAIE, Maestra de Apoyo). Provisorio hasta tener sus instructivos.",
+      "campos": [
+        "firma y sello",
+        "diagnostico",
+        "solicito",
+        "indico",
+        "se prescribe",
+        "matricula",
+        "m n",
+        "m p"
+      ],
+      "palabras": [
+        "orden medica",
+        "prescripcion",
+        "receta",
+        "rp",
+        "escolaridad especial",
+        "maestra de apoyo",
+        "integracion escolar",
+        "sesiones semanales",
+        "por el periodo"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto",
+        "monto mensual"
+      ]
+    },
+    {
+      "id": "presupuesto_profesional",
+      "nombre": "Presupuesto prestacional - Profesional particular",
+      "grupo": "presupuesto",
+      "oficial": true,
+      "titulos": [
+        "presupuesto prestacional de profesionales particulares"
+      ],
+      "pies": [
+        "tratamientos de rehabilitacion 2"
+      ],
+      "campos": [
+        "valor de la sesion",
+        "cantidad de sesiones mensuales",
+        "apellido y nombre del profesional",
+        "especialidad",
+        "domicilio donde se realiza la prestacion",
+        "cronograma de asistencia",
+        "segun mecanismo integracion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "presupuesto_institucion_rehabilitacion",
+      "nombre": "Presupuesto prestacional - Institución de rehabilitación",
+      "grupo": "presupuesto",
+      "oficial": true,
+      "titulos": [
+        "presupuesto prestacional de institucion de rehabilitacion"
+      ],
+      "pies": [
+        "tratamientos de rehabilitacion 3",
+        "modulo de estimulacion temprana 2"
+      ],
+      "campos": [
+        "nombre de la institucion",
+        "monto mensual",
+        "cronograma de asistencia",
+        "segun mecanismo integracion",
+        "periodo solicitado"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "valor de la sesion",
+        "tipo de jornada"
+      ]
+    },
+    {
+      "id": "presupuesto_terapeutico_educativo",
+      "nombre": "Presupuesto prestacional - Terapéutico-Educativo",
+      "grupo": "presupuesto",
+      "oficial": true,
+      "titulos": [
+        "presupuesto prestacional de prestaciones terapeuticas educativas"
+      ],
+      "pies": [
+        "prestaciones terapeuticas educativas 2"
+      ],
+      "campos": [
+        "incluye colacion y almuerzo",
+        "tipo de jornada",
+        "categoria",
+        "monto mensual",
+        "cronograma de asistencia",
+        "segun mecanismo integracion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "presupuesto_transporte",
+      "nombre": "Presupuesto de transporte",
+      "grupo": "presupuesto",
+      "oficial": true,
+      "titulos": [
+        "presupuesto de transporte"
+      ],
+      "pies": [
+        "transporte especial 3"
+      ],
+      "campos": [
+        "total kms mensuales",
+        "valor por km",
+        "adicional dependencia 35",
+        "diagrama de traslado",
+        "cronograma de traslado",
+        "compania de seguros",
+        "razon social del prestador",
+        "firma y sello del transportista"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "presupuesto_otro",
+      "nombre": "Presupuesto (otro formato)",
+      "grupo": "presupuesto",
+      "nota": "Presupuestos en hoja propia del prestador o de prestaciones sin formulario cargado.",
+      "campos": [
+        "monto mensual",
+        "valor mensual",
+        "valor de la sesion",
+        "periodo solicitado",
+        "cronograma",
+        "nomenclador"
+      ],
+      "palabras": [
+        "presupuesto",
+        "honorarios",
+        "cuit",
+        "condicion frente al iva",
+        "mensual",
+        "$"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "formulario de acreditacion en cuenta bancaria"
+      ]
+    },
+    {
+      "id": "trabajo_coordinado",
+      "nombre": "Constancia de trabajo coordinado",
+      "grupo": "prestador",
+      "oficial": true,
+      "titulos": [
+        "constancia de trabajo coordinado"
+      ],
+      "pies": [
+        "tratamientos de rehabilitacion 4"
+      ],
+      "campos": [
+        "tratamiento interdisciplinario",
+        "informe unico",
+        "firma y aclaracion de los prestadores",
+        "en mi caracter de vinculo"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "acreditacion_bancaria",
+      "nombre": "Formulario de acreditación en cuenta bancaria",
+      "grupo": "bancaria",
+      "oficial": true,
+      "titulos": [
+        "formulario de acreditacion en cuenta bancaria prestador de discapacidad",
+        "formulario de acreditacion en cuenta bancaria"
+      ],
+      "pies": [
+        "tratamientos de rehabilitacion 5",
+        "transporte especial 4",
+        "prestaciones terapeuticas educativas 3",
+        "modulo de estimulacion temprana 3"
+      ],
+      "campos": [
+        "datos de la cuenta bancaria donde se acreditara",
+        "nombre del titular de la cuenta",
+        "alias",
+        "caja de ahorro",
+        "cuenta corriente",
+        "cbu",
+        "firma y sello del prestador o representante legal"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "cud",
+      "nombre": "Certificado Único de Discapacidad (CUD)",
+      "grupo": "general",
+      "titulos": [
+        "certificado unico de discapacidad"
+      ],
+      "campos": [
+        "orientacion prestacional",
+        "acompanante",
+        "ley 22 431",
+        "ley 24 901",
+        "fecha de vencimiento",
+        "vencimiento",
+        "junta evaluadora",
+        "diagnostico"
+      ],
+      "palabras": [
+        "discapacidad",
+        "certificado",
+        "agencia nacional de discapacidad",
+        "andis",
+        "cud",
+        "ministerio de salud"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "informacion importante para cumplimentar",
+        "resolucion n 1907 2023 prorroga"
+      ]
+    },
+    {
+      "id": "constancia_arca",
+      "nombre": "Constancia de inscripción AFIP/ARCA",
+      "grupo": "prestador",
+      "titulos": [
+        "constancia de inscripcion",
+        "agencia de recaudacion y control aduanero",
+        "administracion federal de ingresos publicos"
+      ],
+      "campos": [
+        "clave unica de identificacion tributaria",
+        "monotributo",
+        "impuesto a las ganancias",
+        "iva",
+        "actividad principal",
+        "fecha de inscripcion",
+        "forma juridica",
+        "domicilio fiscal"
+      ],
+      "palabras": [
+        "arca",
+        "afip",
+        "cuit",
+        "regimen",
+        "categoria"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "registro nacional de prestadores",
+        "constancia de alumno regular"
+      ]
+    },
+    {
+      "id": "comprobante_cbu",
+      "nombre": "Comprobante de CBU (emitido por el banco)",
+      "grupo": "bancaria",
+      "titulos": [
+        "constancia de cbu",
+        "clave bancaria uniforme",
+        "constancia de clave bancaria uniforme"
+      ],
+      "campos": [
+        "tipo de cuenta",
+        "numero de cuenta",
+        "titular",
+        "alias",
+        "caja de ahorro",
+        "cuenta corriente",
+        "sucursal"
+      ],
+      "palabras": [
+        "cbu",
+        "banco",
+        "pesos",
+        "cuit"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "formulario de acreditacion en cuenta bancaria",
+        "datos de la cuenta bancaria donde se acreditara"
+      ]
+    },
+    {
+      "id": "rnp",
+      "nombre": "Inscripción en el RNP (SSSalud)",
+      "grupo": "prestador",
+      "titulos": [
+        "registro nacional de prestadores",
+        "superintendencia de servicios de salud"
+      ],
+      "campos": [
+        "numero de registro",
+        "prestador",
+        "vigencia",
+        "vencimiento",
+        "matricula",
+        "especialidad",
+        "certificado de inscripcion"
+      ],
+      "palabras": [
+        "rnp",
+        "sss",
+        "sssalud",
+        "inscripcion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "personas con discapacidad dependiente de la agencia",
+        "categorizacion"
+      ]
+    },
+    {
+      "id": "categorizacion",
+      "nombre": "Categorización de la institución",
+      "grupo": "prestador",
+      "titulos": [
+        "registro nacional de prestadores de servicios de atencion a favor de las personas con discapacidad",
+        "categorizacion"
+      ],
+      "campos": [
+        "categoria a",
+        "categoria b",
+        "categoria c",
+        "cupo",
+        "modalidad",
+        "agencia nacional de discapacidad",
+        "servicio nacional de rehabilitacion"
+      ],
+      "palabras": [
+        "categoria",
+        "andis",
+        "institucion",
+        "prestacion",
+        "jornada"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto prestacional"
+      ]
+    },
+    {
+      "id": "titulo_habilitante",
+      "nombre": "Título habilitante",
+      "grupo": "prestador",
+      "titulos": [
+        "por cuanto",
+        "confiere el titulo",
+        "otorga el titulo",
+        "le expide el presente diploma"
+      ],
+      "campos": [
+        "universidad",
+        "licenciado en",
+        "licenciada en",
+        "facultad",
+        "rector",
+        "decano",
+        "diploma",
+        "registro de titulos",
+        "legalizacion"
+      ],
+      "palabras": [
+        "titulo",
+        "universidad",
+        "ministerio de educacion",
+        "sello"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "titulo habilitante de cada profesional"
+      ]
+    },
+    {
+      "id": "alumno_regular",
+      "nombre": "Constancia de alumno regular (CUE)",
+      "grupo": "educacion",
+      "titulos": [
+        "constancia de alumno regular",
+        "certificado de alumno regular"
+      ],
+      "campos": [
+        "cue",
+        "clave unica educativa",
+        "ciclo lectivo",
+        "concurre regularmente",
+        "establecimiento",
+        "grado",
+        "sala",
+        "turno",
+        "nivel inicial",
+        "nivel primario"
+      ],
+      "palabras": [
+        "alumno",
+        "alumna",
+        "escuela",
+        "colegio",
+        "jardin",
+        "directora",
+        "director"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "asociados en edad escolar constancia"
+      ]
+    },
+    {
+      "id": "informe_inicial",
+      "nombre": "Informe de evaluación inicial",
+      "grupo": "informe",
+      "titulos": [
+        "informe de evaluacion inicial",
+        "evaluacion inicial",
+        "informe de admision"
+      ],
+      "campos": [
+        "instrumentos de valoracion",
+        "tecnicas administradas",
+        "resultados de la evaluacion",
+        "motivo de consulta",
+        "pruebas aplicadas"
+      ],
+      "palabras": [
+        "evaluacion",
+        "admision",
+        "sugerencias",
+        "conclusion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "informe evolutivo",
+        "plan de abordaje"
+      ]
+    },
+    {
+      "id": "informe_evolutivo",
+      "nombre": "Informe evolutivo",
+      "grupo": "informe",
+      "titulos": [
+        "informe evolutivo",
+        "informe de evolucion",
+        "informe de seguimiento",
+        "informe semestral",
+        "informe anual"
+      ],
+      "campos": [
+        "periodo de abordaje",
+        "intervenciones realizadas",
+        "resultados alcanzados",
+        "logros",
+        "avances",
+        "durante el periodo"
+      ],
+      "palabras": [
+        "evolucion",
+        "progresos",
+        "se observa",
+        "objetivos alcanzados"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "evaluacion inicial"
+      ]
+    },
+    {
+      "id": "plan_abordaje",
+      "nombre": "Plan de abordaje individual",
+      "grupo": "informe",
+      "titulos": [
+        "plan de abordaje individual",
+        "plan de abordaje",
+        "plan de tratamiento",
+        "plan terapeutico"
+      ],
+      "campos": [
+        "objetivos especificos",
+        "objetivos generales",
+        "estrategias",
+        "modalidad de prestacion",
+        "periodo de abordaje",
+        "frecuencia"
+      ],
+      "palabras": [
+        "objetivos",
+        "abordaje",
+        "intervencion",
+        "metas"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "coincidencia entre resumen de historia clinica orden medica plan de tratamiento"
+      ]
+    },
+    {
+      "id": "acta_acuerdo",
+      "nombre": "Acta de acuerdo",
+      "grupo": "educacion",
+      "titulos": [
+        "acta de acuerdo",
+        "acta acuerdo"
+      ],
+      "campos": [
+        "integracion escolar",
+        "escuela comun",
+        "equipo de apoyo",
+        "maestra de apoyo",
+        "las partes acuerdan",
+        "proyecto pedagogico"
+      ],
+      "palabras": [
+        "acuerdo",
+        "escuela",
+        "inclusion",
+        "docente"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "informacion importante para cumplimentar"
+      ]
+    },
+    {
+      "id": "adaptacion_curricular",
+      "nombre": "Adaptación curricular / PPI",
+      "grupo": "educacion",
+      "titulos": [
+        "adaptacion curricular",
+        "proyecto pedagogico individual",
+        "configuraciones de apoyo"
+      ],
+      "campos": [
+        "contenidos",
+        "areas curriculares",
+        "criterios de evaluacion",
+        "lengua",
+        "matematica",
+        "ppi"
+      ],
+      "palabras": [
+        "curricular",
+        "pedagogico",
+        "alumno",
+        "docente"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "habilitacion_transporte",
+      "nombre": "Habilitación municipal del transporte",
+      "grupo": "transporte",
+      "titulos": [
+        "habilitacion municipal",
+        "habilitacion de transporte",
+        "transporte escolar",
+        "permiso de transporte"
+      ],
+      "campos": [
+        "dominio",
+        "municipalidad",
+        "vehiculo",
+        "marca",
+        "modelo",
+        "vigencia",
+        "titular"
+      ],
+      "palabras": [
+        "habilitacion",
+        "transporte",
+        "municipio",
+        "chofer"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "poliza",
+        "verificacion tecnica"
+      ]
+    },
+    {
+      "id": "poliza_seguro",
+      "nombre": "Póliza de seguro del vehículo",
+      "grupo": "transporte",
+      "titulos": [
+        "poliza",
+        "certificado de cobertura",
+        "frente de poliza"
+      ],
+      "campos": [
+        "aseguradora",
+        "compania de seguros",
+        "responsabilidad civil",
+        "vigencia desde",
+        "dominio",
+        "asegurado",
+        "prima"
+      ],
+      "palabras": [
+        "seguro",
+        "seguros",
+        "cobertura",
+        "vehiculo"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion",
+        "presupuesto de transporte"
+      ]
+    },
+    {
+      "id": "vtv",
+      "nombre": "Verificación Técnica Vehicular (VTV)",
+      "grupo": "transporte",
+      "titulos": [
+        "verificacion tecnica vehicular",
+        "revision tecnica obligatoria",
+        "vtv",
+        "rto"
+      ],
+      "campos": [
+        "dominio",
+        "apto",
+        "oblea",
+        "vencimiento",
+        "planta",
+        "resultado"
+      ],
+      "palabras": [
+        "verificacion",
+        "vehiculo",
+        "inspeccion"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "licencia_conducir",
+      "nombre": "Licencia de conducir",
+      "grupo": "transporte",
+      "titulos": [
+        "licencia nacional de conducir",
+        "licencia de conducir"
+      ],
+      "campos": [
+        "clase",
+        "otorgamiento",
+        "vencimiento",
+        "agencia nacional de seguridad vial"
+      ],
+      "palabras": [
+        "conducir",
+        "licencia",
+        "seguridad vial"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "recorrido_maps",
+      "nombre": "Recorrido (Google Maps)",
+      "grupo": "transporte",
+      "titulos": [
+        "google maps"
+      ],
+      "campos": [
+        "km",
+        "min",
+        "via",
+        "ruta",
+        "datos del mapa"
+      ],
+      "palabras": [
+        "recorrido",
+        "trayecto",
+        "google"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    },
+    {
+      "id": "dni",
+      "nombre": "DNI",
+      "grupo": "general",
+      "titulos": [
+        "documento nacional de identidad",
+        "registro nacional de las personas"
+      ],
+      "campos": [
+        "renaper",
+        "ministerio del interior",
+        "fecha de emision",
+        "ejemplar",
+        "tramite n"
+      ],
+      "palabras": [
+        "republica argentina",
+        "mercosur",
+        "documento"
+      ],
+      "excluye": [
+        "condiciones generales para toda la documentacion"
+      ]
+    }
+  ]
+}

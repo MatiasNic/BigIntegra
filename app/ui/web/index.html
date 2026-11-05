@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Big Integra</title>
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/brand/bigpdf-icon-v3-32x32.png">
+  <link rel="apple-touch-icon" href="./assets/brand/bigpdf-icon-v3-192x192.png">
+  <link rel="stylesheet" href="./css/main.css">
+  <link rel="stylesheet" href="./css/viewer.css">
+  <link rel="stylesheet" href="./css/components.css?v=5">
+  <script>
+    (function() {
+      try {
+        if (localStorage.getItem('bigpdf_theme') === 'dark') {
+          document.documentElement.classList.add('theme-dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+
+<div id="app"></div>
+<div id="toast-container" role="status" aria-live="polite"></div>
+
+<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
+<script type="module" src="./js/desktop-bridge.js?v=3"></script>
+<script type="module" src="./js/app.js?v=5"></script>
+
+</body>
+</html>

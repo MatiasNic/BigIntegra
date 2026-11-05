@@ -1,0 +1,1615 @@
+/* Toast notifications */
+#toast-container {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  right: auto;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px;
+  border-radius: var(--radius-sm);
+  background: var(--primary);
+  color: white;
+  font-size: 12.5px;
+  font-weight: 500;
+  box-shadow: 0 6px 18px rgba(15,23,42,0.16);
+  min-width: 210px;
+  max-width: 280px;
+  transform: translateX(-120%);
+  transition: transform 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  pointer-events: all;
+}
+
+.toast.show { transform: translateX(0); }
+.toast.hide { transform: translateX(-120%); }
+
+.toast.toast-success { background: var(--success); }
+.toast.toast-error { background: var(--error); }
+.toast.toast-warning { background: var(--warning); color: #1a1a1a; }
+
+.toast svg { flex-shrink: 0; width: 15px; height: 15px; }
+
+/* Dark mode toasts: dark bg + colored border replaces solid colors */
+.theme-dark .toast {
+  background: rgba(11, 20, 40, 0.97);
+  color: #e2e8f0;
+  border: 1px solid rgba(59, 134, 239, 0.28);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.40);
+}
+.theme-dark .toast.toast-success { border-color: rgba(52, 211, 153, 0.55); color: #6ee7b7; }
+.theme-dark .toast.toast-error   { border-color: rgba(248, 113, 113, 0.55); color: #fca5a5; }
+.theme-dark .toast.toast-warning { border-color: rgba(251, 191, 36, 0.55); color: #fbbf24; }
+
+/* Loading state */
+.loading-spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ─── WORKSPACE LAYOUT ──────────────────────────────────────────────────────── */
+
+.ws-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 14px;
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  flex-wrap: wrap;
+}
+
+.ws-btn {
+  padding: 5px 10px;
+  font-size: 13px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.ws-btn.active {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+/* Botón "Limpiar" vive dentro del header azul (.ws-app-header) — .btn-ghost por
+   defecto usa --text-secondary (gris), ilegible sobre ese fondo. */
+#clear-ws-btn {
+  color: #fff;
+}
+
+#clear-ws-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.toolbar-sep {
+  width: 1px;
+  height: 22px;
+  background: var(--border);
+  margin: 0 4px;
+}
+
+.ws-counter {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-primary);
+  background: var(--bg-hover);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 3px 12px;
+  white-space: nowrap;
+}
+
+.ws-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ─── PAGE GRID ──────────────────────────────────────────────────────────────── */
+
+.pg-grid {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  padding: 20px 16px;
+  align-content: flex-start;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.pg-unit {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  transition: none;
+  content-visibility: auto;
+  contain-intrinsic-size: 250px 260px;
+}
+
+/* Durante drag activo: cero transiciones en el grid → movimiento 1:1 */
+.artemis-dragging .pg-unit,
+.artemis-dragging .pg-card,
+.artemis-dragging .pg-inter-slot,
+.artemis-dragging .pg-card-info,
+.artemis-dragging .pg-hover-actions {
+  transition: none !important;
+}
+/* Kill animations that add compositor work and perceived lag during drag */
+body.artemis-dragging .pg-placeholder-card {
+  animation: none !important;
+}
+body.artemis-dragging .pg-skeleton,
+body.artemis-dragging .pg-skeleton::after {
+  animation: none !important;
+}
+
+/* Consistent grabbing cursor during drag.
+   NO wildcard (*) — matching 6000+ elements causes 5-20ms style recalc on drag start.
+   cursor is inherited, so body sets the default; only explicit-cursor elements need override. */
+body.artemis-dragging { cursor: grabbing !important; }
+body.artemis-dragging .pg-card,
+body.artemis-dragging .pg-file-card,
+body.artemis-dragging .pg-canvas-wrap,
+body.artemis-dragging .pg-inter-slot,
+body.artemis-dragging button { cursor: grabbing !important; }
+
+/* Suppress hover repaints on cards during drag */
+body.artemis-dragging .pg-card:hover {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Suppress transitions/animations on file cards during file drag.
+   No wildcard — targeting known elements only. */
+body.artemis-dragging .pg-file-card {
+  transition: none !important;
+}
+body.artemis-dragging .pg-file-actions,
+body.artemis-dragging .pg-file-thumb,
+body.artemis-dragging .pg-file-type {
+  transition: none !important;
+  animation: none !important;
+}
+body.artemis-dragging .pg-file-drop-ph {
+  animation: none !important;
+}
+body.artemis-dragging .pg-file-card:hover {
+  box-shadow: none !important;
+}
+
+.pg-card {
+  width: 190px;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background 0.12s ease, border-color 0.12s ease;
+  position: relative;
+  user-select: none;
+  touch-action: none;
+  margin: 6px;
+}
+
+.pg-card:hover {
+  background: var(--bg-hover);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.10);
+}
+
+.pg-card.selected {
+  background: transparent;
+}
+
+.pg-card.selected .pg-card-info {
+  background: rgba(42, 111, 224, 0.10);
+  border-radius: 0 0 8px 8px;
+}
+
+.pg-card:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+/* Página eliminada: atenuada pero clickeable — clic (o el botón "Restaurar") la
+   restaura de a una. La opacidad va en el contenido, no en la tarjeta, para que
+   el botón de restaurar se vea nítido. */
+.pg-card.deleted .pg-canvas-wrap,
+.pg-card.deleted .pg-card-info {
+  opacity: 0.35;
+  filter: grayscale(1);
+}
+
+.pg-card.deleted .pg-checkbox,
+.pg-card.deleted .pg-hover-actions,
+.pg-card.deleted .pg-order-badge,
+.pg-card.deleted .rotation-badge {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.pg-restore-btn {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 10px;
+  font-size: 11px;
+  font-weight: 700;
+  font-family: inherit;
+  color: white;
+  background: var(--accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  white-space: nowrap;
+}
+
+.pg-card.deleted .pg-restore-btn { display: inline-flex; }
+.pg-restore-btn:hover { filter: brightness(1.08); }
+
+.pg-card.dragging {
+  opacity: 0.16;
+  transform: none !important;
+  box-shadow: none !important;
+  transition: none !important;
+}
+
+/* Card top area */
+.pg-card-top {
+  position: relative;
+  width: 100%;
+}
+
+/* Thumbnail canvas wrapper */
+.pg-canvas-wrap {
+  width: 100%;
+  aspect-ratio: 0.707;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-canvas-wrap);
+  overflow: hidden;
+  position: relative;
+}
+
+.pg-canvas-wrap .pg-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  -webkit-user-drag: none;
+  user-select: none;
+  image-rendering: -webkit-optimize-contrast; /* Chromium/WebKit: preserva texto nítido */
+  image-rendering: crisp-edges;               /* Estándar fallback */
+}
+
+/* Skeleton shimmer — compositor-only via transform (no paint per frame) */
+.pg-skeleton {
+  position: absolute;
+  inset: 0;
+  background: #e2e8f0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.pg-skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
+  transform: translateX(-100%);
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+.pg-canvas-wrap.loading .pg-skeleton {
+  opacity: 1;
+}
+
+.pg-canvas-wrap.loading .pg-thumb-img,
+.pg-file-thumb.loading .pg-thumb-img {
+  opacity: 0;
+}
+
+@keyframes shimmer {
+  to { transform: translateX(200%); }
+}
+
+/* Checkbox */
+.pg-checkbox {
+  position: absolute;
+  top: 6px;
+  left: 6px;
+  z-index: 3;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--accent);
+}
+
+/* Order badge */
+.pg-order-badge {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.55);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 5px;
+  z-index: 2;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+}
+
+.pg-card:hover .pg-order-badge,
+.pg-card:focus-within .pg-order-badge {
+  opacity: 1;
+}
+
+/* Rotation badge */
+.rotation-badge {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: var(--accent);
+  color: white;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 4px;
+  padding: 1px 4px;
+  z-index: 3;
+  min-width: 0;
+}
+
+.rotation-badge:empty { display: none; }
+
+/* Hover action buttons */
+.pg-hover-actions {
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  display: flex;
+  gap: 3px;
+  opacity: 0;
+  transition: opacity 0.15s;
+  z-index: 4;
+}
+
+.pg-card:hover .pg-hover-actions,
+.pg-card:focus-within .pg-hover-actions { opacity: 1; }
+
+.pg-action-btn {
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 5px;
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-primary);
+  transition: background 0.15s;
+}
+
+.pg-action-btn:hover { background: var(--accent); color: white; border-color: var(--accent); }
+.pg-action-btn.danger:hover { background: var(--error); border-color: var(--error); color: white; }
+
+/* Card info */
+.pg-card-info {
+  padding: 5px 4px 6px;
+  text-align: center;
+}
+
+.pg-source-name {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 800;
+  background: var(--file-bg, #dbeafe);
+  color: var(--file-accent, #1d4ed8);
+  border-radius: 20px;
+  padding: 2px 9px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  border: 1.5px solid var(--file-border, #93c5fd);
+}
+
+.pg-page-num {
+  font-size: 10px;
+  color: var(--text-secondary);
+  margin-top: 1px;
+}
+
+/* ─── GRID EMPTY STATE ───────────────────────────────────────────────────────── */
+
+.grid-empty {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 40px;
+  color: var(--text-secondary);
+  text-align: center;
+  gap: 16px;
+}
+
+.grid-empty svg { opacity: 0.3; }
+.grid-empty p { font-size: 14px; margin: 0; }
+
+/* ─── RESULT PANEL (SPLIT MODE) ─────────────────────────────────────────────── */
+
+.result-panel {
+  background: var(--bg-card);
+  border-top: 2px solid var(--accent);
+  flex-shrink: 0;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.group-name-input {
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  padding: 4px 8px;
+  font-size: 12px;
+  width: 100%;
+  color: var(--text-primary);
+  background: var(--bg-card);
+}
+
+.group-name-input:focus { border-color: var(--accent); outline: none; }
+
+.group-compress-sel {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 11px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  flex: 1;
+}
+
+/* ─── UPLOAD DROPZONE (workspace variant) ───────────────────────────────────── */
+
+.upload-hint {
+  font-size: 11px !important;
+  margin-top: 12px !important;
+  margin-bottom: 0 !important;
+  color: var(--text-secondary) !important;
+}
+
+/* ─── DnD DROP INDICATORS ───────────────────────────────────────────────────── */
+
+.pg-card { position: relative; }
+
+.pg-card.dragging {
+  opacity: 0.16;
+  transform: none !important;
+  box-shadow: none !important;
+  z-index: 10;
+  transition: none !important;
+}
+
+/* ─── INTER-SLOT (split control + insert, between every pair of pages) ──────── */
+
+.pg-inter-slot {
+  display: flex;
+  flex-direction: column;
+  overflow: visible;
+  align-items: center;
+  align-self: stretch;
+  width: 26px;
+  padding: 5px 2px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pg-split-ctrl {
+  position: relative;
+  overflow: visible;
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: default;
+  pointer-events: none;
+  opacity: 0;
+  min-height: 20px;
+  transition: opacity 0.15s;
+}
+
+.pg-inter-slot.split-active .pg-split-ctrl {
+  cursor: pointer;
+  pointer-events: auto;
+  opacity: 0.4;
+}
+
+.pg-inter-slot.split-active .pg-split-ctrl:hover { opacity: 1; }
+
+.pg-cut-label {
+  position: absolute;
+  top: 4px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-width: 36px;
+  min-height: 20px;
+  padding: 3px 7px;
+  border: 1px solid rgba(14, 165, 233, 0.58);
+  border-radius: 11px;
+  background: var(--bg-card);
+  color: var(--accent);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.12);
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  pointer-events: none;
+  visibility: visible;
+  opacity: 1;
+  z-index: 10;
+}
+
+.pg-cut-label[hidden] {
+  display: none !important;
+}
+
+.pg-split-ctrl.cut-active .pg-cut-label {
+  display: inline-flex;
+}
+
+.theme-dark .pg-cut-label {
+  border-color: rgba(96, 165, 250, 0.62);
+  background: rgba(11, 20, 40, 0.98);
+  color: #bfdbfe;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.32);
+}
+
+.pg-split-ctrl-line {
+  width: 2px;
+  height: 100%;
+  min-height: 28px;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 4px,
+    #94a3b8 4px,
+    #94a3b8 8px
+  );
+  border-radius: 0;
+  transition: background 0.15s;
+}
+
+.pg-inter-slot.split-active .pg-split-ctrl:hover .pg-split-ctrl-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    #38bdf8 3px,
+    #38bdf8 7px
+  );
+}
+
+/* Al apagar un corte con el cursor todavía encima, no mostrar el hover azul
+   hasta que el mouse salga y vuelva a entrar. */
+.pg-inter-slot.split-active .pg-split-ctrl.cut-hover-suppressed,
+.pg-inter-slot.split-active .pg-split-ctrl.cut-hover-suppressed:hover {
+  opacity: 0.4 !important;
+}
+
+.pg-inter-slot.split-active .pg-split-ctrl.cut-hover-suppressed .pg-split-ctrl-line,
+.pg-inter-slot.split-active .pg-split-ctrl.cut-hover-suppressed:hover .pg-split-ctrl-line {
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 4px,
+    #94a3b8 4px,
+    #94a3b8 8px
+  ) !important;
+}
+
+.pg-split-ctrl.cut-active {
+  opacity: 1 !important;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.pg-split-ctrl.cut-active .pg-split-ctrl-line {
+  margin-top: 25px;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 2px,
+    #0ea5e9 2px,
+    #0ea5e9 8px
+  );
+  width: 2px;
+}
+
+.pg-insert-zone-btn {
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border: 2px dashed var(--border);
+  border-radius: 50%;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.45;
+  transition: all 0.15s;
+  padding: 0;
+  line-height: 1;
+}
+
+.pg-insert-zone-btn:hover {
+  border-color: var(--accent);
+  background: #f0f9ff;
+  color: var(--accent);
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* ─── PAGE VIEWER MODAL ──────────────────────────────────────────────────────── */
+
+.pg-viewer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.88);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pv-fade-in 0.15s ease;
+}
+
+@keyframes pv-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* ─── CONFIRM DIALOG (modal propio, reemplaza window.confirm) ───────────────── */
+
+.bigpdf-confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: pv-fade-in 0.15s ease;
+}
+
+.bigpdf-confirm-modal {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  width: 90vw;
+  max-width: 360px;
+  padding: 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.4);
+}
+
+.bigpdf-confirm-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.bigpdf-confirm-message {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.bigpdf-confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pg-viewer-modal {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  width: 92vw;
+  max-width: 1100px;
+  height: 90vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 32px 80px rgba(0,0,0,0.5);
+}
+
+.pg-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 16px;
+}
+
+.pg-viewer-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+  overflow: hidden;
+  min-width: 0;
+}
+
+.pv-filename {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 300px;
+}
+
+.pv-sep { opacity: 0.35; }
+
+.pv-rotation-badge {
+  font-size: 10px;
+  background: var(--accent);
+  color: white;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.pv-rotation-badge:empty { display: none; }
+
+.pg-viewer-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.pv-btn {
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.pv-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.pv-close { color: var(--error); border-color: #fecaca; }
+.pv-close:hover { background: #fee2e2; border-color: var(--error); }
+
+.pv-zoom-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 40px;
+  text-align: center;
+}
+
+.pg-viewer-body {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.pv-nav-btn {
+  width: 44px;
+  flex-shrink: 0;
+  height: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+.pv-nav-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+.pv-nav-btn:disabled { opacity: 0.18; cursor: default; }
+
+.pg-viewer-canvas-wrap {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px;
+  background: var(--bg-canvas-area);
+  height: 100%;
+  min-width: 0;
+}
+
+.pg-viewer-canvas-wrap canvas {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+  border-radius: 4px;
+  display: block;
+  max-width: none;
+  cursor: grab;
+  user-select: none;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+}
+
+.pv-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+.pv-loading svg { opacity: 0.4; }
+
+.pg-viewer-footer {
+  padding: 7px 16px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text-secondary);
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* ─── V2.4: WORKSPACE WORK ROW ──────────────────────────────────────────────── */
+
+.ws-work-row {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+  min-height: 0;
+}
+
+/* ─── V2.4: RESULT PANEL — RIGHT SIDEBAR ───────────────────────────────────── */
+
+.result-panel-side {
+  width: 230px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-left: 2px solid var(--accent);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.result-panel-side.hidden { display: none !important; }
+
+.rp-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rp-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.rp-groups {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.rp-group {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rp-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.rp-part-badge {
+  font-size: 10px;
+  font-weight: 700;
+  background: var(--accent);
+  color: white;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.rp-pages {
+  font-size: 10px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.rp-actions {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rp-actions .group-compress-sel {
+  flex: 1;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 4px;
+  font-size: 10px;
+  color: var(--text-primary);
+  background: var(--bg-card);
+  font-family: inherit;
+  min-width: 0;
+}
+
+/* ─── V2.5: GRID SIZE — CSS grid, exact column count ────────────────────────── */
+
+.pg-grid[data-size="6"]:not(.pg-list) {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  align-content: start;
+}
+
+.pg-grid[data-size="4"]:not(.pg-list) {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  align-content: start;
+}
+
+.pg-grid[data-size="2"]:not(.pg-list) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: start;
+}
+
+.pg-grid[data-size="6"]:not(.pg-list) .pg-unit,
+.pg-grid[data-size="4"]:not(.pg-list) .pg-unit,
+.pg-grid[data-size="2"]:not(.pg-list) .pg-unit {
+  width: 100%;
+  min-width: 0;
+}
+
+.pg-grid[data-size="6"]:not(.pg-list) .pg-card,
+.pg-grid[data-size="4"]:not(.pg-list) .pg-card,
+.pg-grid[data-size="2"]:not(.pg-list) .pg-card {
+  width: auto;
+  flex: 1;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .pg-grid[data-size="6"]:not(.pg-list) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 600px) {
+  .pg-grid[data-size="6"]:not(.pg-list),
+  .pg-grid[data-size="4"]:not(.pg-list) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pg-grid[data-size="2"]:not(.pg-list) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pg-inter-slot {
+  position: relative;
+}
+
+/* Multi-drag: las tarjetas se atenúan sin escala ni transición. */
+.pg-card.dragging {
+  opacity: 0.16;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* ─── V2.9: DROP ZONES — clearer insertion line ──────────────────── */
+.pg-drop-zone {
+  display: none;
+  pointer-events: none;
+  position: relative;
+  height: 0;
+  overflow: visible;
+  margin: 0;
+}
+/* pg-drop-zone stays display:none always — layout-safe, no shift on drag start.
+   Drop target is shown via .pg-drag-placeholder inserted between cards only. */
+
+/* ─── V1.4: ESPACIO DE DESTINO CON RECUADRO PUNTEADO ───────────────────────
+   El placeholder es un elemento real del layout: abre el espacio exacto donde
+   caerá la hoja. No tiene animaciones ni transiciones. */
+.pg-unit.pg-drag-placeholder {
+  flex: 0 0 auto;
+  min-width: 0;
+  min-height: 0;
+  align-items: flex-start;
+  pointer-events: none;
+  content-visibility: visible;
+  contain: none;
+  transition: none !important;
+  animation: none !important;
+}
+
+.pg-placeholder-card {
+  position: relative;
+  width: var(--pg-placeholder-card-width, 190px);
+  height: var(--pg-placeholder-card-height, 250px);
+  margin: 6px;
+  box-sizing: border-box;
+  border: 2px dashed rgba(42, 111, 224, 0.82);
+  border-radius: 10px;
+  background: rgba(42, 111, 224, 0.055);
+  pointer-events: none;
+  transition: none !important;
+  animation: none !important;
+}
+
+.pg-placeholder-count {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 12px;
+  background: #2A6FE0;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 24px;
+  text-align: center;
+}
+
+.theme-dark .pg-placeholder-card {
+  border-color: rgba(96, 165, 250, 0.90);
+  background: rgba(59, 130, 246, 0.08);
+}
+
+body.artemis-dragging .pg-drag-placeholder,
+body.artemis-dragging .pg-placeholder-card {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ─── DRAG GHOST — ultra-lite, compositor-friendly ────────────────── */
+/* No box-shadow: in software-render mode (--disable-gpu) shadow forces
+   a software repaint on every mouse move. Border is free on compositor. */
+.pg-drag-ghost {
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #2A6FE0;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 12px;
+  border-radius: 16px;
+  border: 2px solid rgba(255,255,255,0.35);
+  pointer-events: none;
+  z-index: 9999;
+  white-space: nowrap;
+  will-change: transform;
+  contain: layout paint style;
+  line-height: 1.5;
+  transition: none !important;
+  animation: none !important;
+}
+
+/* ─── V2.6: VIEW TYPE TOGGLE BUTTONS ─────────────────────────────── */
+.ws-vtype-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 11px;
+  border-radius: 7px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  background: var(--bg-card, #fff);
+  color: var(--text-muted, #64748b);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.ws-vtype-btn:hover {
+  border-color: var(--artemis-accent, #0ea5e9);
+  color: var(--artemis-accent, #0ea5e9);
+}
+.ws-vtype-btn.active {
+  background: var(--artemis-accent, #0ea5e9);
+  border-color: var(--artemis-accent, #0ea5e9);
+  color: #fff;
+}
+
+/* ─── V2.6: FILES VIEW GRID ──────────────────────────────────────── */
+.pg-files-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px 0;
+}
+
+.pg-file-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1.5px solid var(--border, #e2e8f0);
+  background: var(--bg-card, #fff);
+  cursor: grab;
+  transition: box-shadow 0.16s, border-color 0.16s, background 0.16s, opacity 0.16s, transform 0.16s;
+  position: relative;
+  user-select: none;
+}
+.pg-file-card:hover {
+  border-color: var(--artemis-accent, #0ea5e9);
+  box-shadow: 0 2px 12px rgba(14,165,233,0.10);
+}
+.pg-file-card.dragging {
+  opacity: 0.32;
+  transform: scale(0.97);
+  cursor: grabbing;
+}
+/* Files DnD drop position indicator */
+.pg-file-drop-ph {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #2A6FE0, #3B86EF 50%, #2A6FE0);
+  box-shadow: 0 0 0 2.5px rgba(59,134,239,0.18), 0 0 12px rgba(59,134,239,0.75);
+  pointer-events: none;
+  margin: 0 10px;
+  animation: file-drop-ph-pulse 0.65s ease-in-out infinite alternate;
+}
+@keyframes file-drop-ph-pulse {
+  from { opacity: 0.72; box-shadow: 0 0 0 2px rgba(59,134,239,0.12), 0 0 8px rgba(59,134,239,0.6); }
+  to   { opacity: 1;    box-shadow: 0 0 0 3px rgba(59,134,239,0.22), 0 0 18px rgba(59,134,239,0.9); }
+}
+
+/* thumbnail area */
+.pg-file-thumb {
+  flex-shrink: 0;
+  width: 44px;
+  height: 58px;
+  border-radius: 5px;
+  overflow: hidden;
+  background: var(--bg-hover, #f1f5f9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border, #e2e8f0);
+}
+.pg-file-thumb .pg-thumb-img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  image-rendering: -webkit-optimize-contrast; /* Chromium/WebKit: preserva texto nítido */
+  image-rendering: crisp-edges;               /* Estándar fallback */
+}
+
+/* file info */
+.pg-file-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.pg-file-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text, #1e293b);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.pg-file-meta {
+  font-size: 0.75rem;
+  color: var(--text-muted, #64748b);
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.pg-file-type {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 4px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* actions — hidden until hover */
+.pg-file-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.14s;
+}
+.pg-file-card:hover .pg-file-actions,
+.pg-file-card:focus-within .pg-file-actions {
+  opacity: 1;
+}
+.pg-file-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--bg-main, #f8fafc);
+  color: var(--text-muted, #64748b);
+  cursor: pointer;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.pg-file-actions button:hover {
+  background: #fff;
+  color: var(--artemis-accent, #0ea5e9);
+  border-color: var(--artemis-accent, #0ea5e9);
+}
+.pg-file-actions button.danger:hover {
+  color: #ef4444;
+  border-color: #ef4444;
+  background: #fff5f5;
+}
+
+/* ─── V2.7: FILES VIEW — GRID MODE ───────────────────────────────── */
+.pg-files-grid.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  align-content: start;
+}
+.pg-files-grid.pg-grid[data-size="6"] {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+.pg-files-grid.pg-grid[data-size="4"] {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.pg-files-grid.pg-grid[data-size="2"] {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.pg-files-grid.pg-grid .pg-file-card {
+  flex-direction: column;
+  align-items: stretch;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  background: var(--bg-card, #fff);
+}
+.pg-files-grid.pg-grid .pg-file-thumb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3/4;
+  border-radius: 0;
+  border: none;
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  background: var(--bg-main, #f8fafc);
+}
+.pg-files-grid.pg-grid .pg-file-thumb .pg-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pg-files-grid.pg-grid .pg-file-info {
+  padding: 8px 10px 4px;
+  background: var(--bg-card, #fff);
+}
+.pg-files-grid.pg-grid .pg-file-name {
+  font-size: 0.75rem;
+}
+.pg-files-grid.pg-grid .pg-file-meta {
+  font-size: 0.67rem;
+}
+.pg-files-grid.pg-grid .pg-file-actions {
+  opacity: 1;
+  padding: 4px 8px 8px;
+  justify-content: flex-end;
+  background: var(--bg-card, #fff);
+}
+/* ─── V3.2: FILE COLOR PALETTE — 8 colors assigned by document load order ──── */
+
+.pg-card[data-color-idx="0"], .pg-file-card[data-color-idx="0"] { --file-accent: #92400e; --file-bg: #fef3c7; --file-border: #fbbf24; }
+.pg-card[data-color-idx="1"], .pg-file-card[data-color-idx="1"] { --file-accent: #047857; --file-bg: #d1fae5; --file-border: #6ee7b7; }
+.pg-card[data-color-idx="2"], .pg-file-card[data-color-idx="2"] { --file-accent: #6d28d9; --file-bg: #ede9fe; --file-border: #c4b5fd; }
+.pg-card[data-color-idx="3"], .pg-file-card[data-color-idx="3"] { --file-accent: #b91c1c; --file-bg: #fee2e2; --file-border: #fca5a5; }
+.pg-card[data-color-idx="4"], .pg-file-card[data-color-idx="4"] { --file-accent: #9d174d; --file-bg: #fce7f3; --file-border: #f9a8d4; }
+.pg-card[data-color-idx="5"], .pg-file-card[data-color-idx="5"] { --file-accent: #c2410c; --file-bg: #ffedd5; --file-border: #fdba74; }
+.pg-card[data-color-idx="6"], .pg-file-card[data-color-idx="6"] { --file-accent: #0e7490; --file-bg: #cffafe; --file-border: #67e8f9; }
+.pg-card[data-color-idx="7"], .pg-file-card[data-color-idx="7"] { --file-accent: #1d4ed8; --file-bg: #dbeafe; --file-border: #93c5fd; }
+
+.pg-card[data-color-idx] .pg-source-name {
+  color: var(--file-accent, var(--text-secondary));
+}
+
+.pg-file-card[data-color-idx] {
+  border-left: 4px solid var(--file-accent, var(--border));
+}
+.pg-file-card[data-color-idx] .pg-file-name {
+  color: var(--file-accent, var(--text, #1e293b));
+}
+
+/* Grid view: top border instead of left */
+.pg-files-grid.pg-grid .pg-file-card[data-color-idx] {
+  border-left: none;
+  border-top: 3px solid var(--file-accent, var(--border));
+}
+
+/* ─── Overlay de progreso para operaciones pesadas ───────────────────────────
+   Aparece cuando Python procesa en background (compress, export, import).
+   La ventana sigue respondiendo — el overlay solo bloquea clics accidentales. */
+
+#bp-job-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10500;
+  background: rgba(7, 18, 37, 0.55);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.22s ease;
+  pointer-events: none;
+}
+
+#bp-job-overlay.visible {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.bp-job-card {
+  background: var(--bg-card);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 32px 36px;
+  min-width: 280px;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.32);
+  text-align: center;
+}
+
+.bp-job-spinner {
+  width: 38px;
+  height: 38px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: bp-spin 0.75s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes bp-spin {
+  to { transform: rotate(360deg); }
+}
+
+.bp-job-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.3;
+}
+
+.bp-job-message {
+  font-size: 12px;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  max-width: 320px;
+}
+
+.bp-job-stage {
+  min-height: 16px;
+  color: var(--accent);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.bp-job-elapsed {
+  color: var(--text-secondary);
+  font-size: 10px;
+  opacity: 0.85;
+}
+
+.bp-job-cancel {
+  margin-top: 6px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: inherit;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.bp-job-cancel:hover:not(:disabled) {
+  border-color: var(--error);
+  color: var(--error);
+  background: rgba(239, 68, 68, 0.06);
+}
+
+.bp-job-cancel:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* Dark mode adjustments */
+.theme-dark .bp-job-card {
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.6);
+}
+.theme-dark #bp-job-overlay {
+  background: rgba(4, 10, 22, 0.65);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ─── Integra: etiquetas de documento en las miniaturas ─────────────────────── */
+.pg-doc-label {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  z-index: 3;
+  padding: 2px 6px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(16, 122, 87, 0.92);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.3;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+}
+.pg-doc-label.conf-media { background: rgba(42, 111, 224, 0.92); }
+.pg-doc-label.conf-baja,
+.pg-doc-label.conf-desconocido { background: rgba(217, 119, 6, 0.95); }
+.pg-doc-label.conf-continuacion { background: rgba(71, 85, 105, 0.9); }
+.pg-doc-label.conf-manual { background: rgba(124, 58, 237, 0.92); }
+.pg-doc-label.is-discard { background: rgba(185, 28, 28, 0.9); }
+.pg-doc-label:hover { filter: brightness(1.1); }
+.ig-type-picker {
+  position: absolute;
+  left: 4px;
+  right: 4px;
+  bottom: 4px;
+  z-index: 5;
+  font-size: 11px;
+  max-width: calc(100% - 8px);
+}
+.pg-card.ig-flash { outline: 3px solid var(--warning); outline-offset: 2px; }
+
+/* ─── Integra: panel lateral ────────────────────────────────────────────────── */
+.integra-panel {
+  width: 340px;
+  flex-shrink: 0;
+  background: var(--bg-card);
+  border-left: 2px solid var(--success);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 12px;
+  color: var(--text-primary);
+}
+.integra-panel.hidden { display: none !important; }
+.ig-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+}
+.ig-title { font-weight: 800; font-size: 14px; display: flex; gap: 6px; align-items: center; }
+.ig-body { overflow-y: auto; padding: 10px 12px 16px; display: flex; flex-direction: column; gap: 10px; }
+.ig-section { display: flex; flex-direction: column; gap: 4px; }
+.ig-section-title { font-weight: 700; color: var(--text-secondary); text-transform: uppercase; font-size: 10px; letter-spacing: 0.04em; }
+.ig-check { display: flex; gap: 6px; align-items: flex-start; cursor: pointer; }
+.ig-check input { margin-top: 2px; accent-color: var(--accent); }
+.ig-check em, .ig-block-title em { color: var(--warning); font-style: normal; font-size: 10px; }
+.ig-cond { display: flex; justify-content: space-between; gap: 6px; align-items: center; }
+.ig-cond select { font-size: 11px; max-width: 170px; }
+.ig-analyze { justify-content: center; }
+.ig-hint { color: var(--text-secondary); margin: 0; line-height: 1.4; }
+.ig-benef { margin: 0; }
+.ig-actions { display: flex; flex-wrap: wrap; gap: 4px; }
+.ig-actions .ws-btn { font-size: 11px; padding: 4px 8px; }
+.ig-block { border: 1px solid var(--border); border-radius: 8px; padding: 8px; }
+.ig-block-title { font-weight: 800; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 4px; }
+.ig-estado { margin-left: auto; font-size: 10px; padding: 1px 6px; border-radius: 10px; color: #fff; background: var(--text-secondary); }
+.ig-estado-completo { background: var(--success); }
+.ig-estado-observado { background: var(--warning); }
+.ig-estado-incompleto { background: #dc2626; }
+.ig-items, .ig-obs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+.ig-item { display: flex; gap: 6px; padding: 3px 4px; border-radius: 4px; }
+.ig-item[data-goto], .ig-link { cursor: pointer; }
+.ig-item[data-goto]:hover, .ig-link:hover { background: var(--bg-grid); }
+.ig-item small { color: var(--text-secondary); }
+.ig-icon { width: 16px; flex-shrink: 0; text-align: center; }
+.ig-falta .ig-item-text b { color: #dc2626; }
+.ig-obs-title { margin-top: 6px; font-weight: 700; }
+.ig-obs li { padding: 2px 4px; color: var(--text-secondary); }
+.ig-socio { white-space: pre-wrap; font-family: inherit; font-size: 12px; margin: 0; }

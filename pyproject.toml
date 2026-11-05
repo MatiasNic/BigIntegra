@@ -1,0 +1,33 @@
+[project]
+name = "bigintegra"
+dynamic = ["version"]  # se lee de app/__init__.py (versión única)
+description = "Big Integra — armado y análisis de legajos de Discapacidad (basado en BigPDF) (PySide6 + QWebEngineView)."
+requires-python = ">=3.10"
+readme = "README.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "app.__version__" }
+
+[tool.ruff]
+target-version = "py310"
+line-length = 110
+exclude = ["app/ui/web/vendor"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+# main.py setea variables de entorno (Qt/Chromium) ANTES de importar PySide6: los
+# imports "tarde" son intencionales y obligatorios. Es la única excepción.
+[tool.ruff.lint.per-file-ignores]
+"main.py" = ["E402"]
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+exclude = ["app/ui/web/vendor"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+# Raíz del repo en sys.path: los tests importan `app.*` aunque se corra `pytest`
+# a secas (sin `python -m`), como hace el CI.
+pythonpath = ["."]

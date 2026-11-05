@@ -1,0 +1,5 @@
+# Herramientas de desarrollo (lint y tests). Versiones exactas por el mismo motivo
+# que requirements.txt.
+ruff==0.17.1
+mypy==2.4.0
+pytest==9.1.1
